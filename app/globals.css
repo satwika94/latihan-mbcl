@@ -1,0 +1,348 @@
+:root {
+  --color-bg: #f4f5f7;
+  --color-card: #ffffff;
+  --color-text: #1a1a1a;
+  --color-muted: #666666;
+  --color-border: #e2e2e2;
+  --color-primary: #2563eb;
+
+  --color-belum-mulai-bg: #fdecea;
+  --color-belum-mulai-text: #b3261e;
+  --color-dikerjakan-bg: #fff4d6;
+  --color-dikerjakan-text: #8a6100;
+  --color-selesai-bg: #e3f6e8;
+  --color-selesai-text: #1e7a34;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.app-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.you-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 6px 14px 6px 6px;
+  font-size: 15px;
+}
+
+.you-badge__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.refresh-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.refresh-button {
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.refresh-button:active {
+  transform: scale(0.98);
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.card--mine {
+  border: 2px solid var(--color-primary);
+}
+
+.card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.card__name {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.card__mine-tag {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: #e8efff;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.badge--belum_mulai {
+  background: var(--color-belum-mulai-bg);
+  color: var(--color-belum-mulai-text);
+}
+
+.badge--dikerjakan {
+  background: var(--color-dikerjakan-bg);
+  color: var(--color-dikerjakan-text);
+}
+
+.badge--selesai {
+  background: var(--color-selesai-bg);
+  color: var(--color-selesai-text);
+}
+
+.card__task {
+  font-size: 17px;
+  margin: 10px 0 4px;
+  color: var(--color-text);
+}
+
+.card__task--empty {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
+.card__time {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.editor {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+
+.editor__label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.status-choices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.status-choice {
+  border-radius: 12px;
+  border: 2px solid var(--color-border);
+  padding: 12px 4px;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--color-card);
+  color: var(--color-muted);
+  cursor: pointer;
+  text-align: center;
+}
+
+.status-choice--belum_mulai.status-choice--active {
+  background: var(--color-belum-mulai-bg);
+  color: var(--color-belum-mulai-text);
+  border-color: var(--color-belum-mulai-text);
+}
+
+.status-choice--dikerjakan.status-choice--active {
+  background: var(--color-dikerjakan-bg);
+  color: var(--color-dikerjakan-text);
+  border-color: var(--color-dikerjakan-text);
+}
+
+.status-choice--selesai.status-choice--active {
+  background: var(--color-selesai-bg);
+  color: var(--color-selesai-text);
+  border-color: var(--color-selesai-text);
+}
+
+.task-input {
+  width: 100%;
+  font-size: 17px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  margin-bottom: 6px;
+}
+
+.task-hint {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin: 0 0 14px;
+  text-align: right;
+}
+
+.save-button {
+  width: 100%;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.save-button:active {
+  transform: scale(0.99);
+}
+
+.save-button:disabled {
+  opacity: 0.6;
+}
+
+.save-feedback {
+  text-align: center;
+  font-size: 14px;
+  color: var(--color-selesai-text);
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* Name picker screen */
+.picker {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 24px 16px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.picker__title {
+  font-size: 26px;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 6px;
+}
+
+.picker__subtitle {
+  font-size: 17px;
+  color: var(--color-muted);
+  text-align: center;
+  margin: 0 0 28px;
+}
+
+.picker__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.picker__button {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 19px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.picker__button:active {
+  background: #eef2ff;
+  border-color: var(--color-primary);
+}
+
+.loading {
+  text-align: center;
+  color: var(--color-muted);
+  padding: 40px 0;
+}
