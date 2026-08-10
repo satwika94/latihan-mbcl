@@ -98,3 +98,102 @@ HP, pilih nama, dan mulai pakai.
 - Tidak ada riwayat status sebelumnya.
 - Tidak ada dashboard/laporan/statistik/filter.
 - Tidak ada role admin berbeda, tidak ada dark mode/kustomisasi.
+
+---
+
+# Arsip Materi Seminar (`/materi`)
+
+Fitur kedua di repo ini: arsip & review materi seminar/workshop/pelatihan yang
+datanya **tersimpan langsung di Google Drive milik pengguna** (bukan di
+database aplikasi). Setiap materi yang disimpan otomatis menjadi:
+
+- Folder kategori di dalam folder `Materi Seminar & Workshop/` di Drive-mu
+  (`01_Gizi-Olahraga/`, `02_RED-S_LEA/`, dst — sesuai struktur di
+  `Template_Review_Materi_Seminar.md`).
+- File markdown per materi, mengikuti format ringkasan (Latar Belakang,
+  Temuan, Data/Metode, Implikasi Praktis, Referensi, Overlap, Action Item).
+- File `INDEX.md` di folder utama yang diperbarui otomatis, berisi tabel
+  semua materi dan status reviewnya.
+
+Aplikasi juga menyimpan satu file index terstruktur (`_index.json`) di folder
+utama supaya daftar materi bisa dimuat cepat tanpa membaca ulang semua file.
+
+## Cara kerja autentikasi
+
+- Login pakai OAuth2 akun Google pribadi (bukan service account) — kamu
+  login sekali di browser, aplikasi minta izin akses Drive.
+- Scope yang dipakai sengaja dibatasi ke `drive.file`: aplikasi **hanya**
+  bisa melihat/mengubah folder & file yang dibuat oleh aplikasi ini sendiri,
+  bukan seluruh isi Drive-mu.
+- Konsekuensi dari scope terbatas ini: kalau kamu sudah pernah membuat
+  folder `Materi Seminar & Workshop/` secara manual mengikuti panduan di
+  `Template_Review_Materi_Seminar.md`, aplikasi **tidak** akan melihat folder
+  manual itu (karena bukan ia yang membuatnya). Biarkan saja — aplikasi akan
+  membuat folder baru dengan nama yang sama saat pertama kali dipakai.
+- Sesi disimpan sebagai refresh token terenkripsi (AES-256-GCM) di cookie
+  `httpOnly`, bukan di database.
+
+## Setup fitur Arsip Materi Seminar (Google Drive)
+
+### 1. Buat OAuth Client di Google Cloud Console
+
+1. Buka [Google Cloud Console](https://console.cloud.google.com/) → buat
+   project baru (atau pakai yang sudah ada).
+2. Aktifkan **Google Drive API**: menu **APIs & Services → Library**, cari
+   "Google Drive API", klik **Enable**.
+3. Atur **OAuth consent screen** (APIs & Services → OAuth consent screen):
+   - User type: **External** (kalau akun pribadi/bukan Google Workspace)
+     lalu tambahkan emailmu sebagai **test user**, atau **Internal** kalau
+     pakai akun Google Workspace.
+   - Isi nama aplikasi & email kontak seperlunya, tidak perlu verifikasi
+     untuk pemakaian pribadi/test.
+4. Buat kredensial: **APIs & Services → Credentials → Create Credentials →
+   OAuth client ID**, tipe **Web application**.
+   - **Authorized redirect URIs**, tambahkan:
+     - `http://localhost:3000/api/auth/google/callback` (untuk `npm run dev`)
+     - `https://<domain-vercel-kamu>/api/auth/google/callback` (untuk
+       deployment produksi)
+   - Simpan **Client ID** dan **Client Secret** yang muncul.
+
+### 2. Isi environment variable
+
+Salin `.env.example` ke `.env.local` (untuk lokal) lalu isi:
+
+```
+GOOGLE_CLIENT_ID=isi-dari-google-cloud-console
+GOOGLE_CLIENT_SECRET=isi-dari-google-cloud-console
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+SESSION_SECRET=hasil-dari-openssl-rand--hex-32
+```
+
+Buat `SESSION_SECRET` dengan:
+
+```bash
+openssl rand -hex 32
+```
+
+Untuk deploy di Vercel, tambahkan keempat variabel ini juga di **Settings →
+Environment Variables** project-mu, dengan `GOOGLE_REDIRECT_URI` mengarah ke
+domain produksi (dan tambahkan URI itu juga ke daftar Authorized redirect
+URIs di langkah 1).
+
+### 3. Jalankan & pakai
+
+```bash
+npm install
+npm run dev
+```
+
+Buka `http://localhost:3000/materi`, klik **Hubungkan Google Drive**, login
+dan setujui izin akses. Setelah itu kamu bisa langsung menambah materi —
+setiap simpan akan langsung membuat/memperbarui folder & file di Drive-mu.
+
+## Struktur kode fitur ini
+
+- `lib/materi/types.ts` — tipe data materi & daftar 7 kategori.
+- `lib/materi/google-auth.ts` — OAuth2 client, cookie sesi.
+- `lib/materi/drive.ts` — semua operasi Google Drive (folder, file markdown,
+  index JSON, `INDEX.md`).
+- `app/api/auth/google/*` — mulai login & callback OAuth.
+- `app/api/materi/*` — CRUD materi (baca/tulis lewat Drive API).
+- `app/materi/page.tsx`, `components/materi/*` — halaman & UI.
