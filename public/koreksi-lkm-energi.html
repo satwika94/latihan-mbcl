@@ -11,7 +11,7 @@
 [hidden]{display:none!important}
 :root{
   --bg:#F5F7F4; --surface:#FFFFFF; --surface-2:#EEF2ED; --ink:#15302A; --ink-2:#4A5F59; --line:#D5DED8;
-  --accent:#1F6B52; --accent-soft:#DCEDE4;
+  --accent:#1F6B52; --accent-soft:#DCEDE4; --on-accent:#FFFFFF;
   --late:#9A6300; --late-soft:#FBEFD6;
   --miss:#A8322A; --miss-soft:#F9E1DE;
   --rev:#5B4BA6; --rev-soft:#E9E5F7;
@@ -24,7 +24,7 @@
   :root:not([data-theme="light"]){
     color-scheme:dark;
     --bg:#0F1715; --surface:#16211E; --surface-2:#1C2A26; --ink:#E4EDE8; --ink-2:#9DB0A8; --line:#2A3A35;
-    --accent:#5FC39B; --accent-soft:#1B3A2F;
+    --accent:#5FC39B; --accent-soft:#1B3A2F; --on-accent:#0F1715;
     --late:#E8B454; --late-soft:#3A2D12;
     --miss:#F08A80; --miss-soft:#40201D;
     --rev:#B3A6F0; --rev-soft:#2A2545; --focus:#5FC39B;
@@ -33,7 +33,7 @@
 :root[data-theme="dark"]{
   color-scheme:dark;
   --bg:#0F1715; --surface:#16211E; --surface-2:#1C2A26; --ink:#E4EDE8; --ink-2:#9DB0A8; --line:#2A3A35;
-  --accent:#5FC39B; --accent-soft:#1B3A2F;
+  --accent:#5FC39B; --accent-soft:#1B3A2F; --on-accent:#0F1715;
   --late:#E8B454; --late-soft:#3A2D12;
   --miss:#F08A80; --miss-soft:#40201D;
   --rev:#B3A6F0; --rev-soft:#2A2545; --focus:#5FC39B;
@@ -42,25 +42,32 @@
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5;margin:0}
 .wrap{max-width:1500px;margin:0 auto;padding-inline:16px;padding-block:28px 48px;display:flex;flex-direction:column;gap:22px}
 @media (min-width:720px){.wrap{padding-inline:28px}}
-h1,h2{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
 h1{font-size:clamp(26px,4vw,38px);font-weight:700;letter-spacing:-.01em}
 h2{font-size:17px;font-weight:700}
 .eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
 .num{font-variant-numeric:tabular-nums;font-family:var(--mono)}
 header{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:flex-end;justify-content:space-between}
 .title{display:flex;flex-direction:column;gap:6px}
-.meta{display:flex;flex-wrap:wrap;gap:10px 22px;color:var(--ink-2)}
+.meta{display:flex;flex-wrap:wrap;gap:10px 22px;color:var(--ink-2);align-items:center}
 .meta label{display:flex;align-items:center;gap:8px}
 .meta input{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 8px;width:9em}
 .formula{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);background:var(--surface-2);padding:6px 10px;border-radius:6px}
+.sync{font-size:12px;color:var(--ink-2)}
+.sync.warn{color:var(--late)}
 
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .stat{background:var(--surface);padding:14px 16px;display:flex;flex-direction:column;gap:2px}
 .stat b{font-family:var(--display);font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
 .stat span{color:var(--ink-2);font-size:12.5px}
-.stat.late b{color:var(--late)} .stat.miss b{color:var(--miss)} .stat.rev b{color:var(--rev)}
+.stat.late b{color:var(--late)} .stat.miss b{color:var(--miss)} .stat.rev b{color:var(--rev)} .stat.ok b{color:var(--accent)}
+.progress{height:6px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-top:6px}
+.progress i{display:block;height:100%;background:var(--accent)}
 
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+details.panel summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center}
+details.panel summary::-webkit-details-marker{display:none}
+details.panel summary .sum{color:var(--ink-2);font-size:12.5px}
 .rules{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:flex-end}
 .field{display:flex;flex-direction:column;gap:4px}
 .field span{font-size:12px;color:var(--ink-2)}
@@ -68,14 +75,54 @@ header{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:flex-end;justify-co
 .field select{width:auto}
 .hint{color:var(--ink-2);font-size:12.5px;max-width:75ch;margin:0}
 
+/* Lembar penilaian */
+.sheet{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.sheet-head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-start;justify-content:space-between}
+.who{display:flex;flex-direction:column;gap:4px;min-width:0}
+.who h3{font-size:22px;font-weight:700}
+.who .nim{font-family:var(--mono);color:var(--ink-2);font-size:13px}
+.who .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.nav{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.nav select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;max-width:min(320px,100%)}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.qcard{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.qcard.done{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.qtop{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.qtop b{font-family:var(--display);font-size:15px}
+.qtop .mx{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+.qin{display:flex;align-items:center;gap:6px}
+.qin input{width:4.6em;font:inherit;font-family:var(--mono);font-size:16px;font-weight:500;text-align:center;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 4px}
+.qin input:focus{border-color:var(--accent)}
+.qin .of{font-family:var(--mono);color:var(--ink-2);font-size:13px}
+.quick{display:flex;flex-wrap:wrap;gap:4px}
+.quick button{font:inherit;font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:5px;padding:2px 7px;cursor:pointer}
+.quick button:hover{border-color:var(--accent)}
+.quick button.ai{color:var(--rev);border-color:color-mix(in srgb,var(--rev) 40%,var(--line))}
+.quick button.ai[disabled]{opacity:.4;cursor:default}
+.sheet-foot{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;justify-content:space-between;border-top:1px solid var(--line);padding-top:14px}
+.calc{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline}
+.calc div{display:flex;flex-direction:column}
+.calc span{font-size:12px;color:var(--ink-2)}
+.calc b{font-family:var(--mono);font-size:18px;font-variant-numeric:tabular-nums}
+.calc .big b{font-family:var(--display);font-size:30px;color:var(--accent)}
+.calc .pen b{color:var(--late)}
+.notes{flex:1 1 320px;display:flex;flex-direction:column;gap:4px}
+.notes span{font-size:12px;color:var(--ink-2)}
+.notes textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-height:64px;resize:vertical;width:100%}
+.flag{font-size:12.5px;color:var(--ink-2);background:var(--surface-2);border-radius:6px;padding:8px 10px;margin:0;max-width:110ch}
+.flag a{color:var(--accent)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .toolbar input[type=search]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px;flex:1 1 220px;min-width:0}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.btn{font:inherit;font-weight:600;font-size:13px;border:1px solid var(--accent);background:var(--accent);color:var(--surface);border-radius:6px;padding:7px 13px;cursor:pointer}
+.btn{font:inherit;font-weight:600;font-size:13px;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent);border-radius:6px;padding:7px 13px;cursor:pointer}
 .btn.ghost{background:transparent;color:var(--accent)}
-button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.btn.quiet{background:transparent;color:var(--ink-2);border-color:var(--line)}
+.btn[disabled]{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible,th[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 .toast{font-size:12.5px;color:var(--accent);min-height:1.2em}
 
 .tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
@@ -87,16 +134,12 @@ thead th .mx{display:block;font-family:var(--mono);font-weight:400;font-size:10.
 th.sticky,td.sticky{position:sticky;left:0;background:var(--surface);z-index:1;box-shadow:1px 0 0 var(--line)}
 thead th.sticky{background:var(--surface-2);z-index:3}
 td.name{white-space:normal;min-width:190px;max-width:260px}
+td.name button{all:unset;cursor:pointer;display:block}
 td.name .n{font-weight:600;line-height:1.3}
+td.name button:hover .n{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
 td.name .nim{font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
-td.q{padding:3px 2px;text-align:center}
-td.q input{width:3.3em;font:inherit;font-family:var(--mono);font-size:12.5px;text-align:center;color:var(--ink);background:transparent;border:1px solid transparent;border-radius:4px;padding:3px 1px}
-td.q input:hover{border-color:var(--line)}
-td.q input:focus{background:var(--bg);border-color:var(--accent)}
-td.q input.low{color:var(--miss)}
-td.q input.full{color:var(--accent)}
-td.q input.edited{background:var(--rev-soft)}
-td.q input:disabled{opacity:.35}
+td.q{text-align:center;font-family:var(--mono);font-size:12.5px;padding-inline:4px}
+td.q.low{color:var(--miss)} td.q.full{color:var(--accent)} td.q.none{color:var(--ink-2);opacity:.5}
 .r{text-align:right}
 .tot{font-weight:600}
 .final{font-family:var(--display);font-size:16px;font-weight:700;text-align:right}
@@ -108,18 +151,15 @@ td.q input:disabled{opacity:.35}
 .pill.rev{background:var(--rev-soft);color:var(--rev)}
 .pill.pend{background:var(--surface-2);color:var(--ink-2)}
 .sub{font-size:11.5px;color:var(--ink-2);display:block;margin-top:2px}
-tr.missing td{background:color-mix(in srgb,var(--miss-soft) 45%,var(--surface))}
-tr.missing td.sticky{background:color-mix(in srgb,var(--miss-soft) 45%,var(--surface))}
+tr.current td{background:var(--accent-soft)}
+tr.current td.sticky{background:var(--accent-soft)}
+tr.missing td{color:var(--ink-2)}
 tbody tr:hover td{background:var(--surface-2)}
-.notebtn{font:inherit;font-size:12px;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-tr.note td{white-space:normal;background:var(--surface-2);font-size:12.5px;color:var(--ink-2);padding:10px 14px}
-tr.note td p{margin:0 0 4px;max-width:110ch}
-tr.note a{color:var(--accent)}
 .diff{color:var(--rev)}
 .empty{padding:30px;text-align:center;color:var(--ink-2)}
 footer{color:var(--ink-2);font-size:12.5px;display:flex;flex-direction:column;gap:4px}
 textarea.fallback{width:100%;height:140px;font-family:var(--mono);font-size:11.5px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 
 </head>
@@ -127,21 +167,60 @@ textarea.fallback{width:100%;height:140px;font-family:var(--mono);font-size:11.5
 <div class="wrap">
   <header>
     <div class="title">
-      <div class="eyebrow">Dasar Ilmu Gizi · Lembar Kerja Mahasiswa</div>
+      <div class="eyebrow">Dasar Ilmu Gizi · Penilaian manual</div>
       <h1>Koreksi LKM Energi</h1>
       <div class="meta">
         <label for="tm">Pertemuan <input id="tm" type="text" placeholder="mis. TM 5"></label>
         <span>17 soal · skor maksimal 100</span>
-        <span id="count-meta"></span>
+        <span class="sync" id="sync" role="status">Memuat nilai…</span>
       </div>
     </div>
-    <div class="formula">Nilai akhir = Σ skor soal − (hari telat × poin/hari)</div>
+    <div class="formula">Nilai akhir = Σ skor soal (dosen) − (hari telat × poin/hari)</div>
   </header>
 
   <section class="stats" id="stats" aria-label="Ringkasan"></section>
 
-  <section class="panel" aria-labelledby="rules-h">
-    <h2 id="rules-h">Aturan pengurangan nilai keterlambatan</h2>
+  <section class="panel sheet" id="sheet" aria-labelledby="who-name">
+    <div class="sheet-head">
+      <div class="who">
+        <div class="eyebrow">Lembar penilaian · <span id="who-pos"></span></div>
+        <h3 id="who-name"></h3>
+        <div class="row"><span class="nim" id="who-nim"></span><span id="who-status"></span></div>
+      </div>
+      <div class="nav">
+        <button class="btn quiet" id="prev" aria-label="Mahasiswa sebelumnya">← Sebelumnya</button>
+        <label for="pick" class="sr" hidden>Pilih mahasiswa</label>
+        <select id="pick" aria-label="Pilih mahasiswa"></select>
+        <button class="btn quiet" id="next" aria-label="Mahasiswa berikutnya">Berikutnya →</button>
+        <button class="btn ghost" id="next-pending">Lompat ke yang belum dinilai</button>
+      </div>
+    </div>
+    <p class="flag" id="who-flag" hidden></p>
+    <div class="actions">
+      <button class="btn quiet" id="fill-ai">Isi semua dari skor AI</button>
+      <button class="btn quiet" id="fill-zero">Isi semua 0</button>
+      <button class="btn quiet" id="fill-clear">Kosongkan</button>
+      <span class="hint">Skor AI hanya pembanding. Nilai yang dipakai adalah angka yang Anda isi.</span>
+    </div>
+    <div class="qgrid" id="qgrid"></div>
+    <div class="sheet-foot">
+      <div class="calc">
+        <div><span>Total skor</span><b id="c-total">–</b></div>
+        <div class="pen"><span id="c-pen-l">Pengurangan telat</span><b id="c-pen">0</b></div>
+        <div class="big"><span>Nilai akhir</span><b id="c-final">–</b></div>
+        <div><span>Skor AI (pembanding)</span><b id="c-ai" class="diff">–</b></div>
+      </div>
+      <label class="notes" for="note"><span>Catatan dosen</span><textarea id="note" placeholder="Umpan balik untuk mahasiswa ini"></textarea></label>
+      <div class="actions">
+        <button class="btn" id="save">Simpan &amp; lanjut</button>
+        <button class="btn ghost" id="save-only">Simpan</button>
+        <span class="toast" id="sheet-toast" role="status"></span>
+      </div>
+    </div>
+  </section>
+
+  <details class="panel" id="rules-panel">
+    <summary><h2>Aturan pengurangan nilai keterlambatan</h2><span class="sum" id="rules-sum"></span></summary>
     <div class="rules">
       <label class="field" for="pen-day"><span>Pengurangan per hari (poin)</span><input id="pen-day" type="number" min="0" step="0.5" value="5"></label>
       <label class="field" for="pen-max"><span>Batas maksimal pengurangan</span><input id="pen-max" type="number" min="0" step="1" value="30"></label>
@@ -153,24 +232,24 @@ textarea.fallback{width:100%;height:140px;font-family:var(--mono);font-size:11.5
         <select id="miss-score"><option value="0">Nilai 0</option><option value="keep">Tetap hitung skor</option></select>
       </label>
     </div>
-    <p class="hint">Keterlambatan diambil dari status pengumpulan di LMS. Contoh dengan aturan bawaan: telat 2 hari 23 jam dihitung 3 hari, jadi dikurangi 15 poin. Telat 15 menit dihitung 1 hari kecuali toleransi diisi. Mahasiswa yang tidak mengumpulkan mendapat nilai 0. Perubahan skor dan aturan tersimpan di browser ini saja.</p>
-  </section>
+    <p class="hint">Keterlambatan diambil dari status pengumpulan di LMS. Dengan aturan bawaan, telat 2 hari 23 jam dihitung 3 hari dan dikurangi 15 poin. Telat 15 menit dihitung 1 hari kecuali toleransi diisi.</p>
+  </details>
 
-  <section style="display:flex;flex-direction:column;gap:10px" aria-label="Tabel nilai">
+  <section style="display:flex;flex-direction:column;gap:10px" aria-label="Rekap nilai">
     <div class="toolbar">
       <input id="q" type="search" placeholder="Cari nama atau NIM…" aria-label="Cari nama atau NIM">
-      <div class="chips" role="group" aria-label="Saring status">
+      <div class="chips" role="group" aria-label="Saring">
         <button class="chip" data-f="all" aria-pressed="true">Semua</button>
-        <button class="chip" data-f="ontime" aria-pressed="false">Tepat waktu</button>
+        <button class="chip" data-f="pending" aria-pressed="false">Belum dinilai</button>
+        <button class="chip" data-f="done" aria-pressed="false">Sudah dinilai</button>
         <button class="chip" data-f="late" aria-pressed="false">Telat</button>
         <button class="chip" data-f="miss" aria-pressed="false">Tidak mengumpulkan</button>
-        <button class="chip" data-f="rev" aria-pressed="false">Perlu ditinjau</button>
+        <button class="chip" data-f="rev" aria-pressed="false">Ditandai perlu ditinjau</button>
       </div>
-      <button class="btn" id="copy">Salin tabel (untuk Excel)</button>
-      <button class="btn ghost" id="reset">Kembalikan skor asli</button>
+      <button class="btn" id="copy">Salin rekap (untuk Excel)</button>
       <span class="toast" id="toast" role="status"></span>
     </div>
-    <div id="fallback" hidden><textarea class="fallback" id="fallback-ta" aria-label="Data tabel"></textarea></div>
+    <div id="fallback" hidden><textarea class="fallback" id="fallback-ta" aria-label="Data rekap"></textarea></div>
     <div class="tablebox">
       <table>
         <thead><tr id="thead"></tr></thead>
@@ -180,8 +259,8 @@ textarea.fallback{width:100%;height:140px;font-family:var(--mono);font-size:11.5
   </section>
 
   <footer>
-    <span>Sumber: Review Koreksi Manual – LKM Energi (sheet "Review Koreksi" dan "Skor per Soal"). NIM diambil dari alamat email mahasiswa.</span>
-    <span>Total dihitung dari penjumlahan skor per soal. Kolom "Skor AI" adalah skor referensi awal; angka ungu menandai selisih dengan total per soal.</span>
+    <span>Sumber: Review Koreksi Manual – LKM Energi. Bobot soal dari sheet "Skor per Soal"; NIM dari alamat email mahasiswa.</span>
+    <span>Klik nama mahasiswa di tabel untuk membuka lembar penilaiannya. Nilai yang disimpan terlihat oleh semua yang membuka halaman ini.</span>
   </footer>
 </div>
 
@@ -189,226 +268,329 @@ textarea.fallback{width:100%;height:140px;font-family:var(--mono);font-size:11.5
 const DATA = {"max": [4.0, 4.0, 4.0, 4.0, 5.0, 5.0, 5.0, 5.0, 4.0, 5.0, 5.0, 10.0, 10.0, 10.0, 10.0, 5.0, 5.0], "rows": [{"id": "181616", "nama": "DITA SOFIA PRAMESTI", "nim": "24061334168", "status": "No submission - Assignment is overdue by: 19 days 14 hours", "s": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ai": null, "flag": "Tidak ada submission", "cat": "Tidak ada submission", "pdf": null, "rev": true}, {"id": "181665", "nama": "GLOVANNY CHRISEYLA GIRSANG", "nim": "26061334167", "status": "Submitted for grading", "s": null, "ai": null, "flag": "File PDF (61MB, hasil scan) tidak dapat diekstrak teksnya sama sekali oleh tool pembaca meskipun dicoba dua kali — perlu ditinjau manual oleh dosen (kemungkinan perlu OCR/download manual).", "cat": "PDF tidak dapat diekstrak sama sekali — perlu dinilai manual dari file asli", "pdf": "https://drive.google.com/file/d/1xtSLhS2dc7nr5JzD60sHoBmjMG3O_pgd/view", "rev": true}, {"id": "181703", "nama": "MAULANA ISHAQ", "nim": "26061334139", "status": "No submission - Assignment is overdue by: 19 days 14 hours", "s": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ai": null, "flag": "Tidak ada submission", "cat": "Tidak ada submission", "pdf": null, "rev": true}, {"id": "181645", "nama": "SARASYAHDE ARIH SENJA", "nim": "26061334138", "status": "No submission - Assignment is overdue by: 19 days 14 hours", "s": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ai": null, "flag": "Tidak ada submission", "cat": "Tidak ada submission", "pdf": null, "rev": true}, {"id": "181701", "nama": "SITI LUTVIANA ULFA", "nim": "26061334149", "status": "Submitted for grading - 2 days 23 hours late", "s": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "ai": 0, "flag": "File PDF berisi materi tentang Karbohidrat (judul: PENGERTIAN KARBOHIDRAT), bukan LKM topik Energi (17 soal); tidak ada satu pun jawaban yang relevan dengan rubrik. Kemungkinan salah unggah file - perlu ditinjau ulang dosen.", "cat": "File PDF tidak relevan: berisi materi tentang Karbohidrat (jenis, fungsi, kebutuhan harian), bukan jawaban LKM Energi 17 soal sesuai rubrik. Tidak ada satu pun jawaban yang dapat dinilai terhadap rubrik ini.", "pdf": "https://drive.google.com/file/d/1w-Vp17zRmj9ob5ECH31IP5SY8ISzZtC-/view", "rev": true}, {"id": "181605", "nama": "ANGGUN AISYAH AZAHRA", "nim": "26061334191", "status": "Submitted for grading", "s": [2.5, 1, 3, 1.5, 2, 2.5, 3, 3, 2, 3.5, 1, 3, 0, 2, 1, 3, 3], "ai": 38, "flag": "Hasil scan/foto (CamScanner) buram dan tulisan tangan sulit dibaca sehingga sebagian teks hasil OCR tidak jelas; jawaban juga tampak banyak yang tidak lengkap (soal 13/IOM sama sekali tidak dikerjakan, mahasiswa bahkan menulis 'belum faham'). Skor perlu ditinjau ulang dosen.", "cat": "Kualitas scan/tulisan tangan sulit dibaca (banyak bagian tidak terbaca jelas); jawaban soal 13 (IOM) tidak ditemukan/kosong; soal 12 & 15 tidak lengkap (Hani dan Harsya tidak dihitung, tidak ada rumus Mifflin); mahasiswa sendiri menulis 'belum faham' pada soal 17.", "pdf": "https://drive.google.com/file/d/12LVgEk_emo64JdC-lhbEMclZqtZuVUlP/view", "rev": true}, {"id": "181623", "nama": "NUR HAMZAH EL HABIBIE", "nim": "26061334143", "status": "Submitted for grading", "s": [0, 0, 0, 0, 0, 3.5, 2.5, 4, 2, 4, 0, 3, 2.5, 1.5, 4, 0.5, 1], "ai": 42, "flag": "Jawaban soal No. 1-5 tidak ditemukan dalam hasil ekstraksi PDF (kemungkinan halaman tidak lengkap/tidak terbaca), dinilai 0 untuk bagian tsb; tulisan tangan pada soal 12-15 juga sulit dibaca — skor perlu ditinjau ulang dosen.", "cat": "Jawaban soal 1-5 tidak ditemukan dalam dokumen (kemungkinan halaman tidak lengkap/tidak terscan) - diberi skor 0; soal 11 (respiratory quotient) tidak dijawab; soal 12 hanya mengerjakan rumus Mifflin-St Jeor (Harris-Benedict tidak dikerjakan); langkah kerja pada soal 13-14 tidak ditampilkan dengan jelas.", "pdf": "https://drive.google.com/file/d/1mNKS_1DxheECap0KfDY0SCOeOvJqi2v2/view", "rev": true}, {"id": "181704", "nama": "SAUQY NAJWA LIAN MAULIDA", "nim": "26061334173", "status": "Submitted for grading - 4 days 18 hours late", "s": [2, 3, 2, 3, 3, 5, 4, 1, 2, 2, 2, 1, 8, 3, 6, 2, 4], "ai": 47.7, "flag": "Hasil scan/tulisan tangan cukup sulit dibaca di beberapa bagian sehingga sejumlah angka pada No.12-15 kurang bisa dipastikan; No.12 tampak menggunakan rumus IOM (bukan Harris-Benedict/Mifflin) sehingga skor rendah — perlu ditinjau ulang dosen.", "cat": "Soal 12 menggunakan rumus IOM (bukan Harris-Benedict/Mifflin-St Jeor yg diminta); BMR Harris-Benedict baru muncul di soal 15; soal 14 tidak lengkap 24 jam untuk semua anggota keluarga", "pdf": "https://drive.google.com/file/d/16tKVJdVEN2zxM14K2xPH5bh5P-BdySKT/view", "rev": true}, {"id": "181662", "nama": "NI MADE DWITYA KARTIKA PUTRI PAYUSE", "nim": "26061334120", "status": "Submitted for grading", "s": [2, 3, 2.5, 1.5, 2, 2, 2.5, 3.5, 2, 4, 2, 4, 4, 3, 1.5, 2.5, 2.5], "ai": 48, "flag": "Sebagian jawaban (terutama soal 5 dan komponen BMR soal 12) sulit terbaca/tidak lengkap akibat kualitas scan — skor perlu ditinjau ulang dosen.", "cat": "Jawaban banyak tidak lengkap/kabur (OCR sebagian rusak namun substansi memang dangkal); data BB/TB/usia antaranggota keluarga tercampur di soal 12-14; Q15 tidak menghitung TDEE (hanya label kategori PAL tanpa nilai kkal)", "pdf": "https://drive.google.com/file/d/11_1vy8UkhwmO49Mol3eYcFqZSWXxnyl7/view", "rev": true}, {"id": "181670", "nama": "ALINE MAULIDIAH NUR RAHMA", "nim": "26061334153", "status": "Submitted for grading", "s": [3, 3, 3, 2, 4, 4, 3, 4, 3, 4, 5, 8, 7, 5, 2, 0, 0], "ai": 60, "flag": "Hasil ekstraksi teks tampak terpotong: rumus Mifflin-St Jeor pada soal 12 tidak lengkap (hanya Harris-Benedict), soal 15 (PAL) tidak berisi perhitungan BMR x PAL yang diminta (malah mengulang perhitungan Mifflin-St Jeor), dan jawaban soal 16-17 tidak ditemukan dalam teks yang terbaca. Perlu ditinjau ulang dosen, kemungkinan ada halaman yang tidak terbaca/ter-scan.", "cat": "Soal 16 dan 17 tidak dijawab (jawaban berhenti setelah soal 15 dan langsung ke Daftar Pustaka). Soal 15 tidak menghitung TDEE (hanya mengulang perhitungan BMR Mifflin-St Jeor tanpa dikalikan faktor PAL).", "pdf": "https://drive.google.com/file/d/1YTdEh9VZgF2EoDWr0ITbJFFUvVP8fdU_/view", "rev": true}, {"id": "181610", "nama": "ATIQOTUR RAHMAH ALFAINI", "nim": "26061334201", "status": "Submitted for grading", "s": [2, 3.5, 3, 3.5, 2.5, 5, 5, 3, 2.5, 4.5, 1.5, 7, 7.5, 3.5, 4, 4.5, 2], "ai": 61.5, "flag": "hasil scan CamScanner tidak berurutan/kabur pada bagian soal No.12-15 (BMR & perhitungan kasus keluarga), sebagian angka sulit dipastikan akibat OCR; skor perlu ditinjau ulang dosen", "cat": "Soal 14: langkah perhitungan METs untuk Hani & Harsya tidak lengkap terlihat pada hasil pembacaan PDF", "pdf": "https://drive.google.com/file/d/18VNbBFq8BU84G26y-WmXtRIxl8_uCflG/view", "rev": true}, {"id": "181698", "nama": "JIHAN PRICILLA AGUSTINA", "nim": "26061334107", "status": "Submitted for grading", "s": [2, 4, 3.5, 3, 4, 5, 3, 3, 3, 4, 2.5, 6, 8, 4, 5, 5, 4], "ai": 68, "flag": "Hasil scan/tulisan tangan sulit dibaca (OCR banyak noise) terutama pada jawaban soal hitungan No. 12-15, sebagian angka tidak terverifikasi jelas - skor perlu ditinjau ulang dosen", "cat": "Kualitas scan sangat buram/tulisan sulit terbaca terutama pada bagian hitungan (soal 12-15), sehingga sebagian angka hasil OCR kurang pasti dan dinilai dengan tingkat keyakinan lebih rendah.", "pdf": "https://drive.google.com/file/d/1EwwlKMQt8B9b4QpZtLDSg1fWOZNSFvFe/view", "rev": true}, {"id": "181686", "nama": "JESSICA GERMITA LATJANDU", "nim": "26061334113", "status": "Submitted for grading", "s": [2.5, 4, 3.5, 3, 4.5, 2.5, 3, 4, 2, 4, 1, 8, 8, 5, 8, 3, 2], "ai": 69.5, "flag": "Hasil scan (CamScanner) buram di beberapa bagian, terutama soal 13-14; beberapa angka perhitungan sulit dipastikan — skor perlu ditinjau ulang dosen.", "cat": "", "pdf": "https://drive.google.com/file/d/18hhiAAuwqdmlpnvocTs3HOULPAlWj_Hd/view", "rev": true}, {"id": "181700", "nama": "KARINTANAYA PARAMITA DEWI", "nim": "26061334182", "status": "Submitted for grading", "s": [1.5, 3, 3, 1, 3, 2, 3, 2, 2, 3, 2, 7, 10, 8, 7, 4, 2], "ai": 70, "flag": "hasil OCR scan berisi banyak teks acak/tidak terbaca (gibberish) yang bercampur dengan jawaban asli; skor perlu ditinjau ulang dosen", "cat": "Q1 jawaban terlalu umum/kurang relevan dengan konsep energi dalam gizi; Q12 rumus Harris-Benedict memiliki kesalahan pada Harsya (salah menggunakan rumus wanita untuk anak laki-laki) dan Bu Dewi (kesalahan hitung usia), meski rumus Mifflin-St Jeor benar semua; Q15 menggunakan rumus BMR alternatif bukan hasil soal 12.", "pdf": "https://drive.google.com/file/d/1slTxQzFSTRnezbz90vsg1Je2HFMgd57I/view", "rev": true}, {"id": "181685", "nama": "PUTRI HERMINA SARI", "nim": "26061334141", "status": "Submitted for grading", "s": [2, 4, 2, 0, 4.5, 3.5, 3.5, 4, 2, 4, 4, 9, 10, 6, 6, 3, 3], "ai": 71, "flag": "Urutan halaman hasil scan/OCR tampak tidak berurutan (jawaban tercampur antar soal) dan soal No. 4 tidak dijawab (kosong) — skor perlu ditinjau ulang dosen.", "cat": "Soal 4 tidak terjawab (kosong); sebagian jawaban soal 14-15 untuk anggota keluarga Hani dan Harsya tidak lengkap/terpotong pada hasil pemindaian dokumen.", "pdf": "https://drive.google.com/file/d/13bFCs9jGTUmX4auZxRKjeENxqWkWz098/view", "rev": true}, {"id": "181650", "nama": "FELYCIA RAINA JUMAR", "nim": "26061334183", "status": "Submitted for grading", "s": [3, 4, 1, 1.5, 5, 5, 5, 5, 2, 5, 2, 10, 4, 8, 8, 5, 2], "ai": 72, "flag": "hasil OCR scan berisi banyak teks acak/tidak terbaca (gibberish) yang bercampur dengan jawaban asli; skor perlu ditinjau ulang dosen", "cat": "Q3 jawaban tidak menjawab definisi kebutuhan energi (hanya menjelaskan hubungan aktivitas fisik dengan energi); Q13 rumus dan substitusi data sudah benar tetapi hasil akhir untuk semua anggota keluarga salah/tidak masuk akal (kemungkinan kesalahan penulisan angka/desimal).", "pdf": "https://drive.google.com/file/d/1cmPiYOnEtmOvq18BdjM0QhH39g6c2aQS/view", "rev": true}, {"id": "181608", "nama": "MEYLANIE ADYANI", "nim": "26061334174", "status": "Submitted for grading", "s": [3, 3, 3.5, 1, 4, 3, 2, 4, 3, 4.5, 4, 9, 8, 7, 6, 1.5, 4], "ai": 72.2, "flag": "Hasil scan/tulisan tangan agak buram di beberapa bagian (No.2, No.13, No.15) sehingga sejumlah angka kurang bisa dipastikan — perlu ditinjau ulang dosen.", "cat": "Soal 4 tidak menjawab komponen TEE (BMR/TEF/aktivitas) dgn tepat; soal 15 memakai BMR baru yg tidak konsisten dgn soal 12; soal 16 bagian kekurangan energi tidak terjawab relevan", "pdf": "https://drive.google.com/file/d/19XG-pvbJuERGa44zlkkAZEm_Dpb136i2/view", "rev": true}, {"id": "181677", "nama": "M.RAMADHANI TJIUNARDI", "nim": "26061334161", "status": "Submitted for grading", "s": [4, 4, 4, 4, 5, 5, 5, 3, 3, 4.5, 2, 6, 8, 4, 3.5, 3.5, 4], "ai": 73.5, "flag": "Jawaban soal No.2 (tabel faktor Atwater) sulit terbaca karena kualitas scan/OCR; skor soal tsb diberikan dengan perkiraan konservatif dan perlu ditinjau ulang dosen.", "cat": "Q12: hanya rumus Harris-Benedict dikerjakan, Mifflin-St Jeor tidak ditampilkan; Q14/15 ada beberapa kesalahan substitusi BB & nilai ganda pada anggota keluarga.", "pdf": "https://drive.google.com/file/d/1wzjPnIrEz3MNyq0JtrD52vxGgXN98UIj/view", "rev": true}, {"id": "181694", "nama": "RABELLA IZZATI PUTRI", "nim": "26061334172", "status": "Submitted for grading", "s": [2, 3, 2.5, 1.5, 5, 5, 3, 4, 2, 4, 4, 10, 10, 4, 5, 4, 1], "ai": 73.9, "flag": "Pada No.14 dan No.15 tampak ada kekeliruan/tertukarnya data BMR antar anggota keluarga (Hani dan Harsya) — perlu ditinjau ulang dosen.", "cat": "Soal 14-15 tertukar data antar anggota keluarga (Hani/Harsya) dan sebagian perhitungan tidak lengkap", "pdf": "https://drive.google.com/file/d/1fe0dYuT8tflHsMRnTmW55E1i2ixPM5x7/view", "rev": true}, {"id": "181671", "nama": "MUHAMMAD BAYU ERLANGGA", "nim": "26061334175", "status": "Submitted for grading", "s": [4, 3, 2, 3.5, 3, 5, 4, 3, 2, 3.5, 2, 9.5, 5, 3, 2, 4.5, 3], "ai": 74.8, "flag": "Hasil scan/tulisan tangan cukup sulit dibaca di beberapa bagian (No.4, No.15), dan No.15 menggunakan rumus BMR non-standar yang tidak mengacu ke hasil No.12 — perlu ditinjau ulang dosen.", "cat": "Soal 13 tanpa langkah kerja & sebagian nilai anomali (Harsya); soal 14 hanya menghitung Pak Salman (anggota lain tidak dihitung); soal 15 hanya kategori PAL disebut tanpa hitungan BMR x PAL", "pdf": "https://drive.google.com/file/d/1lNxxwoqoBBQzAi5eSV2bEjUeh5NKD1kJ/view", "rev": true}, {"id": "181624", "nama": "FAKHRIYA AYU PRAMESTI", "nim": "26061334168", "status": "Submitted for grading", "s": [3, 4, 2, 3, 4.5, 5, 4.5, 4, 3, 4, 4.5, 9, 7, 6, 8, 4, 4], "ai": 79.3, "flag": "Hasil scan/tulisan tangan agak buram di beberapa bagian (terutama No.2 dan No.14), sebagian angka sulit dipastikan — skor ada baiknya ditinjau ulang dosen.", "cat": "", "pdf": "https://drive.google.com/file/d/1DUkX1Vp56WrqdW3_WmLbe4t7Hmrt9Hop/view", "rev": true}, {"id": "181620", "nama": "SYAHLA AULIA SETIYOAJI", "nim": "26061334155", "status": "Submitted for grading", "s": [3, 4, 3, 3, 4, 4, 4, 4, 3, 4, 4, 9, 8, 9, 8, 4, 4], "ai": 79.5, "flag": "Sebagian hasil perhitungan pada soal 13 dan 15 sulit terbaca akibat kualitas scan/OCR (beberapa angka tampak tidak masuk akal, mis. hasil EER yang janggal); skor soal tsb dinilai dari bagian yang masih terbaca dan sebaiknya ditinjau ulang dosen bila memungkinkan melihat berkas asli.", "cat": "", "pdf": "https://drive.google.com/file/d/1NqiXOPWtt9vt2USPgviVVALbHcqucAxW/view", "rev": true}, {"id": "181628", "nama": "INNI FATMIWATI", "nim": "26061334193", "status": "Submitted for grading", "s": [2, 4, 3, 1, 4.5, 4, 4.5, 3, 3, 4, 3.5, 1, 0.5, 1, 1.5, 4, 3], "ai": 50, "flag": "", "cat": "Soal 12-15 (BMR/IOM/METs/PAL) hanya menuliskan rumus umum tanpa substitusi data dan hasil numerik untuk anggota keluarga Pak Salman; beberapa jawaban tampak tertukar urutan penomoran (materi obligatory/facultative & EAT/NEAT muncul di bawah nomor 4).", "pdf": "https://drive.google.com/file/d/1A1PWVRieVWKkQHcm1B3gqV47q6HKl71E/view", "rev": false}, {"id": "181641", "nama": "YASMIN YELENA EKA PUTRI", "nim": "26061334140", "status": "Submitted for grading", "s": [2, 4, 3, 1, 4, 3, 2, 3, 2, 3, 2, 5, 2, 1.5, 3, 3.5, 0.5], "ai": 53.5, "flag": "", "cat": "Kesalahan hitung signifikan pada soal 12 (2 dari 4 anggota keluarga, rumus Harris-Benedict) yang berdampak berantai (error tidak dapat dianggap carried-forward wajar) ke soal 13 dan 15; soal 14 tidak menampilkan rincian per aktivitas (hanya BB x MET rata-rata x 24 jam) dan hasil tidak masuk akal.", "pdf": "https://drive.google.com/file/d/1fi0AR3kiI4iUBqJdWE-0_2qCu92TxQvV/view", "rev": false}, {"id": "181663", "nama": "RIZQI AMIRUL IKHSAN", "nim": "26061334188", "status": "Submitted for grading", "s": [2, 4, 3, 1.5, 2.5, 4, 3, 3, 3, 4, 4, 9, 2, 1, 4, 1, 1], "ai": 55, "flag": "", "cat": "Soal 13 (IOM) mengalami kesalahan substitusi/satuan yang signifikan; soal 14 (METs) tidak dihitung secara memadai; soal 16 hanya membahas sisi kekurangan energi (sisi kelebihan tidak dijawab).", "pdf": "https://drive.google.com/file/d/1fjZA5datlaERxeR2TMZc5GhQlor-Kj39/view", "rev": false}, {"id": "181672", "nama": "DAKKA ROSYIDAN ALFAREZA", "nim": "26061334178", "status": "Submitted for grading", "s": [2, 3, 4, 4, 5, 5, 5, 3, 3, 1, 0, 2, 4, 4, 5, 5, 4], "ai": 57.5, "flag": "", "cat": "Q10 tidak menjelaskan metode pengukuran pengeluaran energi (hanya definisi umum); Q11 (respiratory quotient) tidak dijawab; Q12 hanya menghitung BMR untuk 1 dari 4 anggota keluarga (Harsya saja); Q13-15 hanya menyajikan hasil akhir tanpa langkah/cara kerja yang jelas.", "pdf": "https://drive.google.com/file/d/1I_T2YgZxL2cCY5n8t96ZLEw8AUWCch2O/view", "rev": false}, {"id": "181697", "nama": "ZUFAIRAMALIA PARAHITA", "nim": "26061334154", "status": "Submitted for grading", "s": [2, 3, 3, 2.5, 2, 3, 3, 4, 2, 3, 2, 3, 6, 4, 6, 5, 3], "ai": 57.5, "flag": "", "cat": "Soal 12: BMR hanya dihitung untuk Pak Salman (Harris-Benedict & Mifflin), BMR Bu Dewi/Hani/Harsya tidak dihitung sama sekali. Soal 13: perhitungan EER Harsya menggunakan TB=0,55 (seharusnya 1,30 m), kesalahan substitusi data signifikan.", "pdf": "https://drive.google.com/file/d/1PC7NiRGzHjJKUL24KDgmgl3rueendIb1/view", "rev": false}, {"id": "181673", "nama": "DEVITA CANDRA MAHARANI", "nim": "26061334108", "status": "Submitted for grading", "s": [2.5, 4, 3, 1, 4, 5, 2, 3, 2, 4, 2, 6, 3, 6, 8, 4, 3], "ai": 61.5, "flag": "", "cat": "Banyak kesalahan hitung pada soal 12 (Harris-Benedict) dan soal 13 (IOM, kesalahan penempatan desimal berulang untuk semua anggota keluarga).", "pdf": "https://drive.google.com/file/d/1qBIO_6nn0mteLx1k59srZLIm5B_F0IjV/view", "rev": false}, {"id": "181687", "nama": "MUCH. SYAMAIDZARUN NABIL", "nim": "26061334181", "status": "Submitted for grading", "s": [3, 4, 4, 1.5, 5, 5, 4, 4, 2, 4, 4, 10, 8, 2, 8, 4, 2], "ai": 61.5, "flag": "", "cat": "Q14 (METs) menggunakan rumus yang salah (menjumlahkan semua nilai MET lalu dikalikan total jam) sehingga hasil tidak masuk akal/tidak realistis untuk sebagian besar anggota keluarga.", "pdf": "https://drive.google.com/file/d/1Vnh6BKqIXV_8TChW7qtFFzNZs-2FrSVH/view", "rev": false}, {"id": "181640", "nama": "NURRAHMA CHOIRUNNISSA", "nim": "26061334194", "status": "Submitted for grading", "s": [2.5, 3, 3, 3.5, 4.5, 4, 5, 4.5, 4, 5, 2, 8, 3, 1, 8, 2.5, 1.5], "ai": 62, "flag": "", "cat": "Soal 13 (IOM) mengalami kesalahan satuan tinggi badan (cm bukan meter) pada sebagian besar anggota keluarga sehingga hasil jauh melenceng; soal 14 (METs) perhitungan tidak koheren/tidak tuntas.", "pdf": "https://drive.google.com/file/d/1L8RIZNlKuRPYLCMOKt5uerAex77zch6z/view", "rev": false}, {"id": "181661", "nama": "ZIDAN NAUFAL ALGHIFARI", "nim": "26061334176", "status": "Submitted for grading", "s": [3, 3, 2, 2, 2, 4, 3, 4, 2, 4, 2, 5, 8, 3, 8, 3, 2], "ai": 62, "flag": "", "cat": "Q12 hanya menghitung dengan rumus Harris-Benedict, rumus Mifflin-St Jeor tidak dikerjakan; Q14 (METs) tidak lengkap/tidak jelas mencakup 24 jam untuk semua anggota keluarga.", "pdf": "https://drive.google.com/file/d/1_gxWvOIG0xJCqS8Z8ycD_pxArGYxATiC/view", "rev": false}, {"id": "181618", "nama": "ALYA AGUSTINA", "nim": "26061334117", "status": "Submitted for grading", "s": [3.5, 3, 2.5, 2, 3.5, 4.5, 3.5, 3, 3.5, 4, 2, 8, 9.5, 4, 1.5, 3, 4], "ai": 62.5, "flag": "", "cat": "Q15 tidak menggunakan rumus BMR x PAL (hanya mengulang total METS Q14); Q14 formula/label campur aduk antar anggota keluarga", "pdf": "https://drive.google.com/file/d/1E6CeENhQfWxsmY9tMGrqY1T82leizbLL/view", "rev": false}, {"id": "181648", "nama": "AULIA RAMADHANI", "nim": "26061334124", "status": "Submitted for grading", "s": [2, 4, 3, 2, 4.5, 4, 3, 4, 2, 4, 2, 9, 3, 6, 7, 4, 5], "ai": 65.5, "flag": "", "cat": "Soal 13 (IOM): hasil perhitungan tidak masuk akal (selisih ~100x dari nilai wajar, kemungkinan kesalahan penulisan angka/desimal).", "pdf": "https://drive.google.com/file/d/1kSf41bIa9SBNm7dD-sz9vuKYUlqysfKO/view", "rev": false}, {"id": "181652", "nama": "CAILAH ADYA JANANURAGA", "nim": "26061334197", "status": "Submitted for grading", "s": [2, 4, 2.5, 1.5, 4, 3, 3, 4, 2, 4, 2, 9, 9, 5, 8, 3, 2], "ai": 65.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/10pJ13SNRqQPi5PAF0r2YhQHHUvBDE2Q0/view", "rev": false}, {"id": "181606", "nama": "MUHAMMAD RIDWAN AL ARAAF SURYANTO", "nim": "26061334105", "status": "Submitted for grading", "s": [2, 4, 3, 1.5, 4, 3.5, 2, 3, 2, 4, 2, 10, 8, 2, 7, 3, 3], "ai": 66, "flag": "", "cat": "Soal 14 (METS) hanya berupa rentang hasil tanpa cara kerja/rincian aktivitas per anggota keluarga.", "pdf": "https://drive.google.com/file/d/1OxRhaYONXs4uE1UJz88bHcaneORTXXt4/view", "rev": false}, {"id": "181613", "nama": "SAIFANA ATHIRA", "nim": "26061334170", "status": "Submitted for grading", "s": [3.5, 4, 2, 2, 4, 2.5, 3, 3, 2, 4, 2, 6, 4, 3, 6, 4.5, 2], "ai": 67.1, "flag": "", "cat": "Jawaban umumnya sangat singkat (istilah dilist tanpa penjelasan); soal 13-14 tidak menampilkan langkah kerja", "pdf": "https://drive.google.com/file/d/19EG3Yi9-_srCQ69Y61Y6L8n2yuWhnUdt/view", "rev": false}, {"id": "181653", "nama": "RADITYA DWI REIFANTO", "nim": "26061334127", "status": "Submitted for grading", "s": [2, 4, 4, 4, 4, 3.5, 5, 5, 2, 5, 2, 9, 3, 6, 7, 4, 4.5], "ai": 68.5, "flag": "", "cat": "Soal 13 (IOM): hasil perhitungan tidak masuk akal untuk seluruh anggota keluarga (selisih ~100x dari nilai wajar).", "pdf": "https://drive.google.com/file/d/12QwPtqGDHLHyZSSEyrkB5vPReRZ_oq1z/view", "rev": false}, {"id": "181690", "nama": "SHEILLA RAMADANI AMURI", "nim": "26061334162", "status": "Submitted for grading", "s": [2, 4, 2.5, 1.5, 1, 5, 4, 3, 2, 4.5, 3, 8.5, 9.5, 7.5, 9, 4, 2], "ai": 68.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1BHzo2pueLe1Vpvo_NzjvLrwJP84OjjB1/view", "rev": false}, {"id": "181654", "nama": "YOHANA ANABEL VEGA YUWONO PUTRI", "nim": "26061334122", "status": "Submitted for grading", "s": [2.5, 4, 3.5, 3, 5, 3, 4.5, 4.5, 2, 4, 4, 9.5, 1.5, 7.5, 6.5, 4, 4], "ai": 70, "flag": "", "cat": "Q13 kesalahan signifikan: TB disubstitusi dalam cm (bukan meter) untuk semua anggota keluarga sehingga hasil EER tidak masuk akal", "pdf": "https://drive.google.com/file/d/1DF-hnxNU2nmNto91L_lDWuH3FGOBIrnY/view", "rev": false}, {"id": "181642", "nama": "QUEEN AQILA QUDSIA", "nim": "26061334150", "status": "Submitted for grading", "s": [3, 4, 3, 4, 4, 4, 3, 4, 2, 4, 3, 10, 6, 4, 5, 3, 2], "ai": 70.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1wqPokbrteg9WwOmq6uEC9oZRHZgAgXeH/view", "rev": false}, {"id": "181649", "nama": "ROSSA AULIA", "nim": "26061334132", "status": "Submitted for grading", "s": [3, 4, 3, 3.5, 3, 4, 3, 3, 3, 4, 2, 9, 5, 6, 8, 3.5, 3], "ai": 70.5, "flag": "", "cat": "Soal 13 (IOM): hasil akhir diberikan tanpa langkah substitusi/cara kerja untuk seluruh anggota keluarga.", "pdf": "https://drive.google.com/file/d/1CIWgHTAZcDSRATpym0IppjUh-2eHdeao/view", "rev": false}, {"id": "181669", "nama": "HILDA HAYYINUZZAHWA ANABILA", "nim": "26061334195", "status": "Submitted for grading", "s": [2.5, 4, 3, 1.5, 4.5, 4, 4.5, 3, 3, 4, 4, 5, 9.5, 4, 9, 4, 1.5], "ai": 71, "flag": "", "cat": "Soal 12 (Harris-Benedict) hasil hitung salah untuk seluruh anggota keluarga meski rumus Mifflin-St Jeor benar; soal 14 (METs) menggunakan pendekatan agregat yang tidak sesuai formula sehingga hasil kurang wajar.", "pdf": "https://drive.google.com/file/d/19hmm8hk97cZqQS5mv1TjArDQf3f5vdqz/view", "rev": false}, {"id": "181660", "nama": "LUTFI ANANDITA", "nim": "26061334130", "status": "Submitted for grading - 15 mins 44 secs late", "s": [3, 4, 4, 4, 5, 5, 5, 4, 3, 4, 3, 9, 9, 7, 9, 2, 4.5], "ai": 71, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1eeLThrn5N76GHn3rNimZVxiHVYLYaSrT/view", "rev": false}, {"id": "181651", "nama": "INAYAH RAHAYU ISTIQOMAH", "nim": "26061334179", "status": "Submitted for grading", "s": [3, 4, 4, 1.5, 5, 2.5, 4, 4, 2, 4, 4, 8, 9, 0, 9, 4, 3], "ai": 71.5, "flag": "", "cat": "Q14 (perhitungan METs) tidak ada dalam dokumen, langsung lompat dari soal 13 ke soal 15.", "pdf": "https://drive.google.com/file/d/1fdYFwhbPtfDRyS64WPFZwZA4h-jYo0B-/view", "rev": false}, {"id": "181637", "nama": "AUREL BILLBINA SEPTYANTI", "nim": "26061334146", "status": "Submitted for grading", "s": [2, 3, 3, 1, 2, 3, 2, 3, 2, 4, 2, 10, 9, 7, 8, 4, 2], "ai": 72, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1xEvw5-vVs_uoLn41tf4wx0baWqIm759P/view", "rev": false}, {"id": "181695", "nama": "GISELA ANASTASYA MUNTE", "nim": "26061334190", "status": "Submitted for grading", "s": [2, 3, 3.5, 4, 4, 5, 4.5, 4, 2, 5, 2, 7, 8, 1, 8, 3.5, 2], "ai": 72, "flag": "", "cat": "Soal 12-13 sebagian besar hanya menampilkan hasil akhir tanpa cara kerja lengkap untuk semua anggota keluarga; soal 14 (METs) hanya menuliskan rumus tanpa perhitungan aktual.", "pdf": "https://drive.google.com/file/d/1vwpOGeeO1h9qvaiXjbuXeLDaOYPxwD1J/view", "rev": false}, {"id": "181668", "nama": "MARETTA HUDA LESTARI", "nim": "26061334159", "status": "Submitted for grading", "s": [2.5, 3, 3, 1.5, 5, 5, 3, 3, 3, 4, 2, 9.5, 9, 5, 8, 2, 1.5], "ai": 72, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1hlge6QnpFNqfHkrACgM9q3vMKslIWYuQ/view", "rev": false}, {"id": "181658", "nama": "DHITA PRATIWI", "nim": "26061334136", "status": "Submitted for grading", "s": [2, 3, 3.5, 1, 3, 5, 2, 4.5, 1.5, 4, 1, 10, 6, 4, 7, 3.5, 5], "ai": 72.5, "flag": "", "cat": "Jawaban soal 4 tertukar dengan konsep faktor REE (bukan komponen TEE); soal 14 tidak mencakup seluruh 24 jam aktivitas tiap anggota keluarga.", "pdf": "https://drive.google.com/file/d/1PrUGPGcHhuGPrXs9fs0QxnunBEFCKG2d/view", "rev": false}, {"id": "181699", "nama": "KAILILA ZAHURA RAMADHANI", "nim": "26061334133", "status": "Submitted for grading", "s": [3, 3, 2, 1.5, 4, 3, 3, 4, 3, 3, 3, 9, 5, 5, 7, 3.5, 2.5], "ai": 73.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1F9gKv9PzsHt4rdr1hLLBmUVMEhv_pNEV/view", "rev": false}, {"id": "181691", "nama": "KEANO RUZAIN FIRSTYAN", "nim": "26061334103", "status": "Submitted for grading", "s": [3, 4, 2, 3, 4, 4.5, 4, 3, 2, 4, 2, 9.5, 6.5, 8, 7.5, 4, 3], "ai": 73.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1AvxLEzews6wrAGTwR8oPylV7VTFgzkN9/view", "rev": false}, {"id": "181626", "nama": "RIMBI FAJAR VATIKASARI", "nim": "26061334147", "status": "Submitted for grading", "s": [3, 3, 3, 1.5, 4, 3, 5, 4, 3, 3, 4, 10, 7, 3, 4, 5, 4], "ai": 73.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1U0fXDBQm5rbuVd9ndsLvLfWbtCZFiJ3c/view", "rev": false}, {"id": "181696", "nama": "ALISYA PUTRI RAMADANI", "nim": "26061334180", "status": "Submitted for grading", "s": [3, 4, 2, 1.5, 5, 5, 3, 4, 2, 4, 4, 10, 10, 8, 7, 4, 2], "ai": 74, "flag": "", "cat": "Q15 menggunakan rumus BMR alternatif (bukan hasil BMR dari soal 12) sehingga tidak sepenuhnya menerapkan prinsip error carried forward, namun hasil tetap konsisten dan masuk akal.", "pdf": "https://drive.google.com/file/d/1NyeAEvctvTM_4-v5h6c502-iHDSF1U57/view", "rev": false}, {"id": "181643", "nama": "ELVIRA JELITA TRINASTIKA HAREFA", "nim": "26061334177", "status": "Submitted for grading - 5 days 7 hours late", "s": [3, 2.5, 4, 1.5, 5, 5, 4, 4, 3, 4.5, 3, 9, 7, 5, 7, 5, 2.5], "ai": 74, "flag": "", "cat": "Q2 nilai zat gizi makro sebagian tidak terbaca jelas dari scan (kemungkinan OCR); Q13 ada inkonsistensi hasil akhir untuk Hani (hasil akhir 1241 tidak sesuai dengan komponen hitungan sebelumnya); Q15 ada 1 anggota keluarga (Pak Salman) dengan hasil TDEE tidak konsisten dengan BMR x PAL yang dinyatakan.", "pdf": "https://drive.google.com/file/d/1hI7_p-Y2ZqfMK_QvRC7KvM9sz9RzNfOA/view", "rev": false}, {"id": "181659", "nama": "IKRIMA WALADANA FAIZAH", "nim": "26061334106", "status": "Submitted for grading", "s": [2, 4, 3, 2, 4, 4.5, 4, 3, 2, 4, 4, 8, 8, 7.5, 8.5, 4, 3.5], "ai": 74, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/14Ozme6ko0wzTTej-MDW-r0uuWf0VsNbb/view", "rev": false}, {"id": "181611", "nama": "KEISYA BRILIAN MAHARANI", "nim": "26061334164", "status": "Submitted for grading", "s": [2, 4, 3, 1.5, 5, 5, 3, 3, 1.5, 4.5, 4, 9.5, 9.5, 7, 9.5, 2.5, 1.5], "ai": 74, "flag": "", "cat": "Q16: jawaban berfokus pada dampak neurologis/perkembangan otak, kurang relevan dengan poin kunci rubrik (obesitas/DM vs KEP/stunting).", "pdf": "https://drive.google.com/file/d/1uQ5-Lu4fQ3yfE8zxPT6fwaJTHIBHj8cM/view", "rev": false}, {"id": "181625", "nama": "SEPTIANI CAHAYA RAMADANI", "nim": "26061334118", "status": "Submitted for grading", "s": [2.5, 3, 3.5, 1.5, 5, 3.5, 4.5, 4, 2, 4, 4, 9.5, 9.5, 3.5, 8.5, 2.5, 2], "ai": 74, "flag": "", "cat": "Q4 jawaban tertukar dgn materi faktor REE (Q6); Q14 tidak lengkap (Hani tidak dihitung)", "pdf": "https://drive.google.com/file/d/1xDrln1YVasTNoDwppkGXrBCy0Y8N0F1E/view", "rev": false}, {"id": "181656", "nama": "WINNA FALISHA PUTRI", "nim": "26061334185", "status": "Submitted for grading", "s": [3, 3, 3.5, 2.5, 5, 4, 4, 4.5, 3, 5, 2.5, 7, 9, 2, 8, 4, 1.5], "ai": 74, "flag": "", "cat": "Q12 rumus Harris-Benedict untuk Harsya memiliki kesalahan hitung signifikan (hasil jauh dari nilai yang diharapkan); Q14 (METs) menggunakan rumus yang salah (menjumlahkan semua nilai MET lalu dikalikan total jam) sehingga hasil tidak masuk akal, dan perhitungan untuk Harsya tidak ada.", "pdf": "https://drive.google.com/file/d/1dBLR6HvRxXIQnSzZa9Dh7BCr6QNsmaoJ/view", "rev": false}, {"id": "181630", "nama": "RA.TAQIYAH AGUSTINA AGRAM", "nim": "26061334200", "status": "Submitted for grading", "s": [3, 4, 2.5, 3, 4.5, 4.5, 4, 4, 3, 3.5, 4, 6, 7, 3, 4, 4.5, 2], "ai": 74.5, "flag": "", "cat": "Soal 12 & 14: sebagian langkah perhitungan tidak terlihat jelas/terpotong pada hasil pembacaan PDF", "pdf": "https://drive.google.com/file/d/1-jNj6memUtgIxipkx_tEFtz8ybBMNoyu/view", "rev": false}, {"id": "181688", "nama": "RAISYA AYU RAMADHANI", "nim": "26061334160", "status": "Submitted for grading", "s": [4, 4, 3.5, 4, 4, 5, 4, 4, 2, 5, 4.5, 9.5, 8, 3, 8.5, 5, 2], "ai": 75, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1ULwB0Ax0kK3XHsHIIht-n0XK3u4PXcUz/view", "rev": false}, {"id": "181615", "nama": "YOLITA BERLIANI", "nim": "26061334171", "status": "Submitted for grading", "s": [2, 3, 3, 3.5, 1.5, 5, 3, 4, 4, 5, 2, 6, 10, 8, 4, 4.5, 3], "ai": 75.4, "flag": "", "cat": "Soal 15 menerapkan faktor PAL dua kali (hasil soal 14 yg sudah berupa BMR x PAL dikalikan PAL lagi), sehingga hasil tidak masuk akal", "pdf": "https://drive.google.com/file/d/15h6YkNcSOEFbOG-d5YDraDg20NwnwyVh/view", "rev": false}, {"id": "181655", "nama": "AZ ZAHRA JASMINE SENA", "nim": "26061334119", "status": "Submitted for grading", "s": [2.5, 4, 3.5, 3, 5, 2.5, 4.5, 4, 4, 4.5, 2.5, 9.5, 1.5, 5, 7, 3.5, 3.5], "ai": 75.5, "flag": "", "cat": "Q13 kesalahan signifikan: TB disubstitusi dalam cm (bukan meter) untuk semua anggota keluarga sehingga hasil EER tidak masuk akal (ratusan ribu kkal)", "pdf": "https://drive.google.com/file/d/1XGyMskZxamNSKiiaLbsNmXYjoD--qFN_/view", "rev": false}, {"id": "181666", "nama": "JUNDA ORABEL EL YOVINE", "nim": "26061334145", "status": "Submitted for grading", "s": [2, 3, 3, 2, 4, 4, 4, 4, 3, 4, 2, 9, 9, 5, 8, 4, 2], "ai": 75.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1p4RiPauiZgK9KecADbn1fAd6vq6BQS3t/view", "rev": false}, {"id": "181607", "nama": "IRENE VIVIAN RIHLATI", "nim": "26061334184", "status": "Submitted for grading", "s": [2, 4, 4, 1, 5, 5, 2.5, 4, 3, 4, 4, 10, 10, 2, 9, 5, 4.5], "ai": 76, "flag": "", "cat": "Q14 (METs) menggunakan rumus yang salah (menjumlahkan semua nilai MET lalu dikalikan total jam) sehingga hasil tidak masuk akal untuk sebagian besar anggota keluarga.", "pdf": "https://drive.google.com/file/d/1tk5GD5ABY31Ufjt1-Rs-B1uVtlwpuXcw/view", "rev": false}, {"id": "181636", "nama": "JUWITA NINDYANING TYAS", "nim": "26061334186", "status": "Submitted for grading", "s": [3, 4, 3, 1.5, 4.5, 4, 2, 4, 3, 4, 4, 9, 9, 6.5, 7, 2, 3.5], "ai": 76, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1Ds2c6DlYwazYzVddxK4bHix3GINtphH_/view", "rev": false}, {"id": "181681", "nama": "ANGGITA RAHMA PUTRI", "nim": "26061334126", "status": "Submitted for grading", "s": [3, 4, 4, 4, 4, 3.5, 5, 5, 2, 5, 2, 9, 3, 6, 7, 4, 4.5], "ai": 77, "flag": "", "cat": "Soal 13 (IOM): hasil perhitungan tidak masuk akal untuk seluruh anggota keluarga (selisih ~100x dari nilai wajar).", "pdf": "https://drive.google.com/file/d/1SjEacnHBTrznLkIq14Zy1PBt0319COq5/view", "rev": false}, {"id": "181621", "nama": "KARIN STEPHANI", "nim": "26061334104", "status": "Submitted for grading", "s": [2.5, 4, 3, 3, 4, 4.5, 4, 3, 2, 4, 4, 10, 8, 5, 7, 4, 3], "ai": 77, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1JfKo-xGUViV1Y7OsCi0cxCtBtgPovfHg/view", "rev": false}, {"id": "181622", "nama": "MAHARDIVA ADELIA PUTRI", "nim": "26061334152", "status": "Submitted for grading", "s": [3, 3, 3, 2, 4, 4, 5, 4, 3, 4, 2, 8, 8, 6, 7, 4, 3], "ai": 77, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1MlpVAOiTVYk0rFN_uezPymFpyx05IYHZ/view", "rev": false}, {"id": "181644", "nama": "REVI OKTAVIANA PUTRI", "nim": "26061334165", "status": "Submitted for grading", "s": [2, 4, 3, 2, 5, 4, 5, 3, 3, 4, 4.5, 8, 9.5, 8, 6.5, 4.5, 4.5], "ai": 77, "flag": "", "cat": "Q12: data BB Pak Salman tertulis 60kg (tidak konsisten dg 68kg yg digunakan dlm hitungan); Q12/15 BMR Mifflin Bu Dewi tertukar dg data Hani.", "pdf": "https://drive.google.com/file/d/1FzyJ3EUbNKKZy2mErxFgc46SWVvd8qmK/view", "rev": false}, {"id": "181702", "nama": "AHMAD DHAFIN PUTRA AJI", "nim": "26061334110", "status": "Submitted for grading", "s": [2, 4, 3, 1.5, 4.5, 5, 3, 3, 2, 4, 4, 10, 7, 5, 6, 4, 4], "ai": 77.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/14-h4sr5s3xOKiv_9JWZu5TVq3BLZfgSO/view", "rev": false}, {"id": "181675", "nama": "AZMI NUR ATHIFAH", "nim": "26061334111", "status": "Submitted for grading", "s": [2, 4, 4, 3, 5, 3.5, 3, 3, 2, 4, 4, 9.5, 9.5, 7, 8.5, 4.5, 4.5], "ai": 78, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1VW9iSSs8qs6QD4YD6mvJmOT2mZG8WTM0/view", "rev": false}, {"id": "181667", "nama": "ZONANDHITA ZALFA MAWLA", "nim": "26061334137", "status": "Submitted for grading - 2 days 21 hours late", "s": [3, 3, 2, 1.5, 4, 4.5, 4, 3, 3.5, 2.5, 3.5, 9.5, 10, 8.5, 8, 3, 3], "ai": 78, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1i3E3_pIkUoOGz0aUXBwDh_cQE7ZLidjC/view", "rev": false}, {"id": "181683", "nama": "AQIDAH HIDAYADJATI MARDIKINATA MAHAESA", "nim": "26061334157", "status": "Submitted for grading", "s": [2.5, 4, 3, 3, 1, 5, 3, 3.5, 3, 4, 2, 8.5, 9, 5, 8.5, 4, 3.5], "ai": 78.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/16S7IJagY8UaYlEiLlHC8669o96ETzSg3/view", "rev": false}, {"id": "181614", "nama": "NAYLA HUSNA", "nim": "26061334196", "status": "Submitted for grading", "s": [2, 4, 3.5, 1, 4.5, 4.5, 4, 4, 2, 4, 2, 9, 9, 8, 9, 3.5, 2], "ai": 78.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1RGBYob9VMqLzlJTSRmpc9sSp6fPV8hZ7/view", "rev": false}, {"id": "181634", "nama": "NINDYA NUR RAHMA EKA PUTRI", "nim": "26061334198", "status": "Submitted for grading", "s": [3, 4, 3, 3, 4.5, 4.5, 4.5, 4, 3, 4, 3.5, 9, 8, 4, 8, 3.5, 4], "ai": 78.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1x_zC9bbtuD9DyThpZIjcadNhIJOTaPgZ/view", "rev": false}, {"id": "181689", "nama": "ALYA SALSABILA UTOMO", "nim": "26061334192", "status": "Submitted for grading", "s": [2.5, 4, 3, 1.5, 4.5, 5, 4.5, 3, 3, 4, 4, 10, 8.5, 5, 9, 4.5, 4.5], "ai": 79, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1Xn8pSEVXY3AWSiwcgj5Z3xr-G8hyGR0Y/view", "rev": false}, {"id": "181674", "nama": "ANGELLICA ARA SILVIANA AIBINI", "nim": "26061334204", "status": "Submitted for grading", "s": [2, 4, 3.5, 1.5, 4.5, 4, 4.5, 4, 2.5, 4, 3.5, 9, 6.5, 5, 9, 5, 4.5], "ai": 79, "flag": "", "cat": "Soal 13: jawaban akhir diberikan sebagai rentang (bukan nilai pasti) meski cara kerja ditulis", "pdf": "https://drive.google.com/file/d/1xVVb_2TKzUsYEu4qTGw8-ckKNZwCfG6w/view", "rev": false}, {"id": "181682", "nama": "AXELIA KURNIA", "nim": "26061334112", "status": "Submitted for grading", "s": [2, 3, 3, 1, 4, 4.5, 4, 3, 3, 4, 4, 10, 9.5, 4, 9, 4, 2.5], "ai": 79, "flag": "", "cat": "Soal 2 tidak mencantumkan nilai energi alkohol; soal 14 (METS) tidak mencakup 24 jam penuh untuk semua anggota keluarga (tidur tidak dihitung).", "pdf": "https://drive.google.com/file/d/18VmsyRc8klZetOSNkN7ZhDZ35xKuRvXl/view", "rev": false}, {"id": "181632", "nama": "AYU HILDA MARITZA HAMZAH PUTRI", "nim": "26061334123", "status": "Submitted for grading", "s": [3, 4, 3, 2, 4, 4, 2, 4, 3, 4, 4, 9, 8, 6.5, 8, 4, 4], "ai": 79, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/19sI7K3MQ4QyefIh7pfQW9tfgPJSlauas/view", "rev": false}, {"id": "181676", "nama": "AZKA AULIA TSURAYYA AL HAQ", "nim": "26061334116", "status": "Submitted for grading", "s": [2.5, 4, 3.5, 3, 4, 3, 4.5, 4, 3.5, 4, 4, 5.5, 9.5, 8, 8.5, 3.5, 3.5], "ai": 79, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/14Y8ILXGX0nWNkzAhnCjp78ZnO9W0Ic_t/view", "rev": false}, {"id": "181705", "nama": "MADELAINE MEZIWA GRACIA LAROSA", "nim": "26061334199", "status": "Submitted for grading", "s": [3, 3, 3, 4, 3, 4, 2.5, 3.5, 2, 4.5, 2, 9, 9, 9, 9, 3, 3], "ai": 79, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1OOwuI22rEIOVgorgnYPXpMK0fTchOITf/view", "rev": false}, {"id": "181633", "nama": "VANIA EMERALD KRISTY N", "nim": "26061334121", "status": "Submitted for grading", "s": [3.5, 4, 3.5, 2, 5, 5, 3, 4.5, 2, 4, 4, 8.5, 7.5, 6, 8, 4, 4.5], "ai": 79, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1EUcddx8pFtSLZYEns_5lsMn8k0skdQSA/view", "rev": false}, {"id": "181684", "nama": "VITA FACHRYATUL IFADA", "nim": "26061334135", "status": "Submitted for grading", "s": [3, 4, 3.5, 3, 5, 4, 4, 3, 3, 4.5, 3, 9, 9.5, 6, 5.5, 4, 2], "ai": 79, "flag": "", "cat": "Sebagian tulisan tangan pada soal 14-15 kurang terbaca jelas sehingga sebagian angka pada langkah kerja tidak dapat diverifikasi penuh.", "pdf": "https://drive.google.com/file/d/1Cbt_PWuoaL3CsQlD9fvcoBxRABQa06qF/view", "rev": false}, {"id": "181678", "nama": "ZAGLYNA PUJA SATYARANJANA", "nim": "26061334189", "status": "Submitted for grading", "s": [2.5, 4, 3, 1.5, 4.5, 4, 4, 3, 1.5, 4, 4, 9.5, 9.5, 5, 7, 4, 3], "ai": 79, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1NCX_RnZN0xoB3_p0pnUdpkrY_nppk-fT/view", "rev": false}, {"id": "181609", "nama": "EMA FITRIA ARTIKA PUTRI", "nim": "26061334202", "status": "Submitted for grading", "s": [2, 4, 3.5, 3.5, 4.5, 5, 3, 4, 1.5, 4, 4, 9, 8.5, 4, 8.5, 5, 4.5], "ai": 79.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1aN7538i9XLpikWMa2ZBZd6Tt6i6IPFtg/view", "rev": false}, {"id": "181617", "nama": "NOVI DWI LUTFIAH", "nim": "26061334151", "status": "Submitted for grading", "s": [3, 3, 3, 2, 4, 4, 4, 4, 2, 4, 5, 10, 10, 9, 7, 4, 2], "ai": 79.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1x7rG3k9QnnBcV-qk91k10lML6xuU_ECO/view", "rev": false}, {"id": "181646", "nama": "MUTHI UFAIRAH", "nim": "26061334158", "status": "Submitted for grading", "s": [2.5, 4, 3, 2, 5, 5, 2, 3, 3, 4, 4, 10, 9.5, 5.5, 9, 4, 3.5], "ai": 80.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1zVZ7x3JOsIdWwg2CkWxGKgkuINiBMdyS/view", "rev": false}, {"id": "181692", "nama": "HANIZA AFRILLIA VIRDIANI", "nim": "26061334114", "status": "Submitted for grading", "s": [3, 4, 2.5, 4, 4, 4.5, 4, 4.5, 2, 4.5, 4.5, 10, 9, 4, 8.5, 5, 4], "ai": 81, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1AYlMzk0tJYHdFG0lpQRSpgVXEYlzll14/view", "rev": false}, {"id": "181604", "nama": "INTAN RATNA HARDINI", "nim": "26061334144", "status": "Submitted for grading", "s": [2, 4, 3.5, 1, 5, 3.5, 4.5, 4, 2, 4, 4, 8, 10, 7, 8.5, 3.5, 3], "ai": 82, "flag": "", "cat": "Jawaban soal 4 tertukar dengan konsep faktor REE (bukan komponen TEE); data anggota keluarga Harsya pada soal 14 tidak terlihat lengkap dalam hasil pemindaian.", "pdf": "https://drive.google.com/file/d/1arfFBz7a1B_GPmZwYt4DGCreGnWGuAVT/view", "rev": false}, {"id": "181679", "nama": "ADIINA CAMILIA RULIANTO PUTRI", "nim": "26061334131", "status": "Submitted for grading", "s": [4, 4, 4, 4, 5, 5, 4, 4.5, 3, 5, 2, 9, 9, 6, 4, 5, 5], "ai": 82.5, "flag": "", "cat": "Soal 14: perhitungan METs hanya mencakup 3 dari 4 anggota keluarga (Harsya tidak dihitung). Soal 15: hanya kategori PAL yang ditentukan tanpa hasil akhir TDEE.", "pdf": "https://drive.google.com/file/d/1jNdCLbMBeM7kr10yOGPu__9Z5VeZl7Ex/view", "rev": false}, {"id": "181629", "nama": "SUCI DAHLIA", "nim": "26061334115", "status": "Submitted for grading", "s": [3.5, 4, 2.5, 2, 5, 5, 3.5, 4, 3.5, 4.5, 2.5, 8, 9, 9.5, 9, 5, 5], "ai": 82.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1Q311mACshQOGz20s1eFqwcvwuJ00aUY0/view", "rev": false}, {"id": "181631", "nama": "MUHAMMAD FAZLI ZIHNI NUGROHO", "nim": "26061334129", "status": "Submitted for grading", "s": [3.5, 4, 4, 4, 5, 3.5, 4.5, 3.5, 3, 5, 4, 7.5, 9, 4, 4, 3, 2.5], "ai": 83, "flag": "", "cat": "Soal 15: hanya kategori PAL yang ditentukan, tidak ada hasil akhir TDEE (kkal/hari) yang dihitung.", "pdf": "https://drive.google.com/file/d/17QJ8b69cCQLeD53vbZ478IrDxBrD3SbZ/view", "rev": false}, {"id": "181639", "nama": "AISYAH YULIA ALMAGHFIRA", "nim": "26061334134", "status": "Submitted for grading", "s": [3, 2.5, 3, 3, 5, 3.5, 3, 4, 3, 4, 4, 9, 4, 6, 5, 5, 4], "ai": 83.5, "flag": "", "cat": "Soal 2 (nilai energi zat gizi makro) sulit dipastikan karena hasil OCR/tulisan tangan pada bagian ini kurang jelas; skor diberikan dengan asumsi konservatif.", "pdf": "https://drive.google.com/file/d/1egJuFLkC9AUVK9awHk57NS39q-Ts_n1D/view", "rev": false}, {"id": "181680", "nama": "AL-DHIEZA AMANDA PUTRI RATSONGKO", "nim": "26061334142", "status": "Submitted for grading", "s": [3, 4, 3.5, 4, 4, 4.5, 5, 3, 3.5, 4, 4.5, 9, 9.5, 3, 4, 4.5, 4.5], "ai": 84, "flag": "", "cat": "Soal 14 dan 15 hanya menampilkan hasil akhir tanpa langkah kerja/rincian per aktivitas sehingga hanya mendapat skor komponen hasil sesuai ketentuan rubrik.", "pdf": "https://drive.google.com/file/d/1Ti4KvkV6jUsrSyD6bCFh183FxC1wDkRw/view", "rev": false}, {"id": "181664", "nama": "DINDA PUSPA ANUGERAH", "nim": "26061334109", "status": "Submitted for grading", "s": [2, 4, 3, 3, 4, 4, 4, 3, 2.5, 4.5, 4, 10, 10, 9, 8, 5, 2.5], "ai": 84, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1WlY5YGMKdqXtbsHuODIEOoRv_ZDn_nZ4/view", "rev": false}, {"id": "181647", "nama": "AQILLA ZAHWA AMELIA PUTRI", "nim": "26061334163", "status": "Submitted for grading", "s": [4, 4, 3.5, 4, 4.5, 4, 4, 3.5, 3, 4, 4.5, 8.5, 9.5, 3, 8, 4, 4], "ai": 85, "flag": "", "cat": "Q14: beberapa aktivitas tertukar antar anggota keluarga (mis. aktivitas Bu Dewi tercantum di bagian Harsya) dan BB Pak Salman salah (60kg, seharusnya 68kg).", "pdf": "https://drive.google.com/file/d/1qiIBpBdajDzNFp47_qgzPzdKYRvV-HIO/view", "rev": false}, {"id": "181619", "nama": "CHESYA BERLIANA PUTRI", "nim": "26061334128", "status": "Submitted for grading", "s": [3, 3, 3.5, 2, 2, 3.5, 5, 4, 3, 4, 3, 8.5, 7, 8, 8, 2.5, 2.5], "ai": 85.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1g2sQjvPh_gI0NKAkg_eux0SkBxlIUTfT/view", "rev": false}, {"id": "181627", "nama": "RAHAYU DEWI ANGGRAENI", "nim": "26061334125", "status": "Submitted for grading", "s": [3, 4, 2, 3, 5, 5, 5, 3, 3, 4, 2, 9, 9, 8, 8, 4.5, 4.5], "ai": 87.5, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1UnemBh9_pihGV9uOQ3IxGPYSCSDWfjQw/view", "rev": false}, {"id": "181657", "nama": "NAJLA KHALISHAH PUTRI CHOIRULIA", "nim": "26061334187", "status": "Submitted for grading", "s": [4, 4, 4, 3.5, 5, 5, 4.5, 5, 2, 5, 4.5, 9.5, 9.5, 7, 5, 5, 4], "ai": 88, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1KzgsRel2hQWkCdCaz80nU1y8ykApjovS/view", "rev": false}, {"id": "181635", "nama": "ZORA ANNABELLA ADISTY WIDY ADHARY", "nim": "26061334203", "status": "Submitted for grading", "s": [3, 3.5, 3.5, 4, 4.5, 4.5, 4.5, 4.5, 3.5, 4, 4.5, 8.5, 9, 8.5, 9, 5, 3.5], "ai": 89, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/194qndakqEnDhzKtyPLZiyIC02XX2oDK3/view", "rev": false}, {"id": "181638", "nama": "AQILA SHAFA AFIFA", "nim": "26061334166", "status": "Submitted for grading", "s": [3.5, 4, 3, 4, 4, 5, 5, 4, 3, 4.5, 4, 8.5, 9, 9, 8.5, 5, 5], "ai": 90.1, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/11WEyp343EVxG8IEVQsy9nGnBa1qx5W7g/view", "rev": false}, {"id": "181612", "nama": "SILMI LUTFIANI ANAQOH", "nim": "26061334156", "status": "Submitted for grading", "s": [3, 4, 4, 4, 4.5, 5, 5, 5, 3, 5, 4, 9.5, 9.5, 5, 8, 5, 5], "ai": 91, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1FG2oNvsPO4ff1W8kNAsTwAz0Wsrb8BC3/view", "rev": false}, {"id": "181693", "nama": "RISHANDRI DYAH KUSUMA WARDANI", "nim": "26061334169", "status": "Submitted for grading", "s": [2, 4, 3, 3, 4.5, 5, 5, 4, 3, 4, 4, 10, 9, 7, 9, 5, 4], "ai": 91.3, "flag": "", "cat": "", "pdf": "https://drive.google.com/file/d/1eY7Qw6rh5Y4riQwM7x5jsM5EzMHeNB3p/view", "rev": false}]};
 const MAX = DATA.max;
 const NQ = MAX.length;
-const KEY = "koreksi-lkm-energi-v1";
+const LS = "koreksi-lkm-energi-manual-v1";
+const DEFAULT_RULES = {"pen-day":"5","pen-max":"30","grace":"0","round":"ceil","miss-score":"0"};
+const ruleIds = Object.keys(DEFAULT_RULES);
 
-function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} }
-let store = load();
-store.edits = store.edits || {};
-store.rules = store.rules || {};
-
-const ruleIds = ["pen-day","pen-max","grace","round","miss-score"];
-ruleIds.forEach(id => { if (store.rules[id] != null) document.getElementById(id).value = store.rules[id]; });
-if (store.tm) document.getElementById("tm").value = store.tm;
-
+// ---------- data ----------
 function parseLate(status){
-  const m = /-\s*(.+?)\s+late/i.exec(status || "");
-  if (!m) return 0;
-  let h = 0;
-  const re = /(\d+)\s*(day|hour|min|sec)/gi; let x;
-  while ((x = re.exec(m[1]))){
-    const v = +x[1], u = x[2].toLowerCase();
-    h += u === "day" ? v*24 : u === "hour" ? v : u === "min" ? v/60 : v/3600;
-  }
+  const m = /-\s*(.+?)\s+late/i.exec(status || ""); if (!m) return 0;
+  let h = 0; const re = /(\d+)\s*(day|hour|min|sec)/gi; let x;
+  while ((x = re.exec(m[1]))){ const v = +x[1], u = x[2].toLowerCase(); h += u==="day"?v*24:u==="hour"?v:u==="min"?v/60:v/3600; }
   return h;
 }
 function lateLabel(status){
-  const m = /-\s*(.+?)\s+late/i.exec(status || "");
-  if (!m) return "";
+  const m = /-\s*(.+?)\s+late/i.exec(status || ""); if (!m) return "";
   return m[1].replace(/days?/,"hari").replace(/hours?/,"jam").replace(/mins?/,"menit").replace(/secs?/,"detik");
 }
+const students = DATA.rows.map((r,i) => ({ ...r, no:i+1, missing:/no submission/i.test(r.status), lateH:parseLate(r.status), lateText:lateLabel(r.status) }));
+const byId = Object.fromEntries(students.map(s => [s.id, s]));
 
-const students = DATA.rows.map((r,i) => ({
-  ...r, no:i+1,
-  missing: /no submission/i.test(r.status),
-  lateH: parseLate(r.status),
-  lateText: lateLabel(r.status),
-}));
+// grades[id] = {s:[17 nilai|null], note:"", at:iso}
+let grades = {};
+let settings = { tm:"", rules:{...DEFAULT_RULES} };
+let db = null, mode = "local";
 
-function scoresOf(s){
-  const base = s.s ? s.s.slice() : Array(NQ).fill(null);
-  const ed = store.edits[s.id] || {};
-  return base.map((v,i) => ed[i] !== undefined ? ed[i] : v);
-}
-function rules(){
-  const g = id => document.getElementById(id).value;
-  return { perDay:+g("pen-day")||0, max:+g("pen-max")||0, grace:+g("grace")||0, round:g("round"), miss:g("miss-score") };
-}
-function compute(s){
+function lsRead(){ try{ return JSON.parse(localStorage.getItem(LS)) || null; }catch(e){ return null; } }
+function lsWrite(){ try{ localStorage.setItem(LS, JSON.stringify({grades, settings})); }catch(e){} }
+const saved = lsRead();
+if (saved){ grades = saved.grades || {}; settings = {...settings, ...(saved.settings||{})}; settings.rules = {...DEFAULT_RULES, ...(settings.rules||{})}; }
+
+function setSync(text, warn){ const el = document.getElementById("sync"); el.textContent = text; el.classList.toggle("warn", !!warn); }
+
+// ---------- scoring ----------
+function rules(){ const R = settings.rules; return { perDay:+R["pen-day"]||0, max:+R["pen-max"]||0, grace:+R["grace"]||0, round:R["round"], miss:R["miss-score"] }; }
+function isDone(g){ return !!g && Array.isArray(g.s) && g.s.every(v => v !== null && v !== "" && v !== undefined); }
+function compute(s, override){
   const R = rules();
-  const sc = scoresOf(s);
-  const graded = sc.some(v => v !== null && v !== "");
+  const g = override || grades[s.id];
+  const sc = g && Array.isArray(g.s) ? g.s : Array(NQ).fill(null);
+  const filled = sc.filter(v => v !== null && v !== "" && v !== undefined).length;
+  const done = filled === NQ;
   const total = sc.reduce((a,v) => a + (+v || 0), 0);
-  let days = 0;
-  const effH = Math.max(0, s.lateH - R.grace/60);
+  let days = 0; const effH = Math.max(0, s.lateH - R.grace/60);
   if (effH > 0) days = R.round === "ceil" ? Math.ceil(effH/24) : effH/24;
-  let pen = days * R.perDay;
-  if (R.max > 0) pen = Math.min(pen, R.max);
-  let final;
+  let pen = days * R.perDay; if (R.max > 0) pen = Math.min(pen, R.max);
+  let final = null;
   if (s.missing && R.miss === "0"){ final = 0; pen = 0; }
-  else if (!graded){ final = null; }
-  else final = Math.max(0, total - pen);
-  return { sc, graded, total, days, pen, final };
+  else if (done) final = Math.max(0, total - pen);
+  return { sc, filled, done, total, days, pen, final };
 }
-const fmt = (v,d=1) => v == null ? "–" : (Math.round(v*10)/10).toLocaleString("id-ID",{maximumFractionDigits:d});
+const fmt = (v,d=1) => v == null ? "–" : (Math.round(v*100)/100).toLocaleString("id-ID",{maximumFractionDigits:d});
+const esc = t => String(t ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-// header
+// ---------- lembar penilaian ----------
+let cur = 0;          // index into students
+let draft = null;     // {s:[], note}
+let dirty = false;
+const order = () => students;
+
+function loadDraft(){
+  const s = students[cur]; const g = grades[s.id];
+  draft = { s: g && Array.isArray(g.s) ? g.s.slice() : Array(NQ).fill(null), note: g?.note || "" };
+  if (s.missing && !g) draft.s = Array(NQ).fill(0);
+  dirty = false;
+}
+function renderSheet(){
+  const s = students[cur];
+  document.getElementById("who-pos").textContent = `${s.no} dari ${students.length}`;
+  document.getElementById("who-name").textContent = s.nama;
+  document.getElementById("who-nim").textContent = "NIM " + s.nim;
+  document.getElementById("who-status").innerHTML = statusPill(s) + (isDone(grades[s.id]) ? ` <span class="pill ok">Sudah dinilai</span>` : ` <span class="pill pend">Belum dinilai</span>`);
+  const flag = document.getElementById("who-flag");
+  const bits = [];
+  if (s.flag) bits.push(esc(s.flag));
+  if (s.cat && s.cat !== s.flag && s.cat !== "Tidak ada submission") bits.push(esc(s.cat));
+  if (s.pdf) bits.push(`<a href="${esc(s.pdf)}" target="_blank" rel="noopener">Buka PDF jawaban</a>`);
+  flag.innerHTML = bits.join(" · "); flag.hidden = !bits.length;
+  document.getElementById("pick").value = s.id;
+  document.getElementById("note").value = draft.note;
+  const ai = s.s;
+  document.getElementById("fill-ai").disabled = !ai;
+  document.getElementById("qgrid").innerHTML = MAX.map((m,i) => {
+    const v = draft.s[i]; const a = ai ? ai[i] : null;
+    const half = m/2;
+    return `<div class="qcard ${v!==null&&v!==""?"done":""}" data-i="${i}">
+      <div class="qtop"><b>Soal ${i+1}</b><span class="mx">maks ${m}</span></div>
+      <div class="qin"><input id="q${i}" type="number" min="0" max="${m}" step="0.5" inputmode="decimal" value="${v ?? ""}" aria-label="Skor soal ${i+1}, maksimal ${m}"><span class="of">/ ${m}</span></div>
+      <div class="quick">
+        <button type="button" data-set="0">0</button>
+        <button type="button" data-set="${half}">${fmt(half)}</button>
+        <button type="button" data-set="${m}">${m}</button>
+        <button type="button" class="ai" ${a==null?"disabled":""} data-set="${a ?? ""}" title="Pakai skor AI">AI ${a==null?"–":fmt(a)}</button>
+      </div></div>`;
+  }).join("");
+  updateCalc();
+}
+function updateCalc(){
+  const s = students[cur]; const c = compute(s, draft);
+  document.getElementById("c-total").textContent = c.filled ? `${fmt(c.total)} / 100` : "–";
+  document.getElementById("c-pen").textContent = c.pen ? "−" + fmt(c.pen) : "0";
+  document.getElementById("c-pen-l").textContent = s.missing ? "Tidak mengumpulkan" : s.lateH > 0 ? `Telat ${fmt(c.days,2)} hari` : "Pengurangan telat";
+  document.getElementById("c-final").textContent = c.final == null ? (c.filled ? `${c.filled}/${NQ} soal` : "–") : fmt(c.final);
+  document.getElementById("c-ai").textContent = s.ai == null ? "–" : fmt(s.ai);
+  document.getElementById("save").textContent = cur < students.length-1 ? "Simpan & lanjut" : "Simpan";
+}
+function setQ(i, raw){
+  let v = raw === "" || raw == null ? null : Math.max(0, Math.min(MAX[i], +raw));
+  if (v !== null && isNaN(v)) v = null;
+  draft.s[i] = v; dirty = true;
+  const inp = document.getElementById("q"+i); if (inp && document.activeElement !== inp) inp.value = v ?? "";
+  inp?.closest(".qcard").classList.toggle("done", v !== null);
+  updateCalc();
+}
+document.getElementById("qgrid").addEventListener("input", e => { const inp = e.target.closest("input"); if (!inp) return; setQ(+inp.closest(".qcard").dataset.i, inp.value); });
+document.getElementById("qgrid").addEventListener("change", e => { const inp = e.target.closest("input"); if (!inp) return; const i = +inp.closest(".qcard").dataset.i; inp.value = draft.s[i] ?? ""; });
+document.getElementById("qgrid").addEventListener("click", e => {
+  const b = e.target.closest("button[data-set]"); if (!b || b.disabled) return;
+  const i = +b.closest(".qcard").dataset.i; setQ(i, b.dataset.set);
+  document.getElementById("q"+i).value = draft.s[i] ?? "";
+});
+document.getElementById("note").addEventListener("input", e => { draft.note = e.target.value; dirty = true; });
+document.getElementById("fill-ai").addEventListener("click", () => { const a = students[cur].s; if (!a) return; a.forEach((v,i) => setQ(i, v)); });
+document.getElementById("fill-zero").addEventListener("click", () => MAX.forEach((m,i) => setQ(i, 0)));
+document.getElementById("fill-clear").addEventListener("click", () => MAX.forEach((m,i) => setQ(i, null)));
+
+function go(idx){
+  if (dirty) saveCurrent(false);
+  cur = (idx + students.length) % students.length; loadDraft(); renderSheet(); render();
+}
+document.getElementById("prev").addEventListener("click", () => go(cur-1));
+document.getElementById("next").addEventListener("click", () => go(cur+1));
+document.getElementById("next-pending").addEventListener("click", () => {
+  for (let k=1; k<=students.length; k++){ const j = (cur+k) % students.length; if (!isDone(grades[students[j].id]) && !(students[j].missing && rules().miss==="0")){ go(j); return; } }
+  sheetToast("Semua mahasiswa sudah dinilai");
+});
+const pick = document.getElementById("pick");
+pick.innerHTML = students.map(s => `<option value="${s.id}">${s.no}. ${esc(s.nama)}</option>`).join("");
+pick.addEventListener("change", () => go(students.findIndex(s => s.id === pick.value)));
+
+function sheetToast(msg){ const t = document.getElementById("sheet-toast"); t.textContent = msg; clearTimeout(sheetToast.t); sheetToast.t = setTimeout(()=>t.textContent="",3000); }
+
+async function writeGrade(id, g){
+  grades[id] = g; lsWrite();
+  if (db){
+    try { await db.doc("nilai/" + id).set(g); setSync("Tersimpan di penyimpanan bersama"); }
+    catch(e){ setSync("Gagal menyimpan ke penyimpanan bersama; tersimpan di browser ini saja", true); }
+  }
+}
+function saveCurrent(advance){
+  const s = students[cur];
+  const g = { s: draft.s.slice(), note: draft.note.trim(), at: new Date().toISOString() };
+  writeGrade(s.id, g);
+  dirty = false;
+  const c = compute(s, g);
+  sheetToast(c.done ? `Tersimpan: ${s.nama.split(" ")[0]} nilai akhir ${fmt(c.final)}` : `Tersimpan sebagian (${c.filled}/${NQ} soal)`);
+  if (advance && cur < students.length-1){ cur++; loadDraft(); renderSheet(); }
+  else renderSheet();
+  render();
+}
+document.getElementById("save").addEventListener("click", () => saveCurrent(true));
+document.getElementById("save-only").addEventListener("click", () => saveCurrent(false));
+document.addEventListener("keydown", e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === "Enter"){ e.preventDefault(); saveCurrent(true); }
+});
+
+// ---------- tabel rekap ----------
+function statusPill(s){
+  if (s.missing) return `<span class="pill miss">Tidak mengumpulkan</span>`;
+  if (s.lateH > 0) return `<span class="pill late">Telat ${s.lateText}</span>`;
+  return `<span class="pill ok">Tepat waktu</span>`;
+}
 const cols = [
   {k:"no", l:"No", cls:"r"},
   {k:"nama", l:"Nama / NIM", cls:"sticky"},
   {k:"status", l:"Pengumpulan"},
+  {k:"graded", l:"Penilaian"},
   ...MAX.map((m,i) => ({q:i, l:"S"+(i+1), m})),
   {k:"total", l:"Total", cls:"r"},
-  {k:"ai", l:"Skor AI", cls:"r"},
-  {k:"days", l:"Telat (hari)", cls:"r"},
   {k:"pen", l:"Pengurangan", cls:"r"},
   {k:"final", l:"Nilai akhir", cls:"r"},
-  {k:"note", l:"Catatan"},
+  {k:"ai", l:"Skor AI", cls:"r"},
+  {k:"note", l:"Catatan dosen"},
 ];
 const thead = document.getElementById("thead");
-let sortKey = "no", sortDir = 1;
+let sortKey = "no", sortDir = 1, filter = "all", query = "";
 cols.forEach(c => {
   const th = document.createElement("th");
   if (c.q !== undefined){ th.className = "q"; th.innerHTML = `${c.l}<span class="mx">/${c.m}</span>`; th.title = `Soal ${c.q+1}, maks ${c.m}`; }
   else {
     th.className = c.cls || ""; th.textContent = c.l;
     if (c.k !== "note"){ th.tabIndex = 0; th.setAttribute("role","button");
-      const go = () => { sortDir = sortKey === c.k ? -sortDir : (c.k==="nama"||c.k==="no"?1:-1); sortKey = c.k; render(); };
-      th.addEventListener("click", go); th.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
+      const go2 = () => { sortDir = sortKey === c.k ? -sortDir : (c.k==="nama"||c.k==="no"?1:-1); sortKey = c.k; render(); };
+      th.addEventListener("click", go2); th.addEventListener("keydown", e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); go2(); } });
     }
   }
   thead.appendChild(th);
 });
 
-let filter = "all", query = "";
-const open = new Set();
-
-function statusCell(s, c){
-  if (s.missing) return `<span class="pill miss">Tidak mengumpulkan</span>`;
-  const bits = [];
-  if (s.lateH > 0) bits.push(`<span class="pill late">Telat ${s.lateText}</span>`);
-  else bits.push(`<span class="pill ok">Tepat waktu</span>`);
-  if (!c.graded) bits.push(`<span class="sub">Belum dinilai</span>`);
-  else if (s.rev) bits.push(`<span class="sub" style="color:var(--rev)">Perlu ditinjau</span>`);
-  return bits.join("");
-}
-
 function render(){
-  const tbody = document.getElementById("tbody");
   const q = query.trim().toLowerCase();
-  let list = students.map(s => ({ s, c: compute(s) }));
-  list = list.filter(({s}) => {
+  let list = students.map(s => ({ s, c: compute(s), g: grades[s.id] }));
+  list = list.filter(({s,c}) => {
     if (q && !(s.nama.toLowerCase().includes(q) || s.nim.includes(q))) return false;
-    if (filter === "ontime") return !s.missing && s.lateH === 0;
+    if (filter === "pending") return !c.done && !(s.missing && rules().miss==="0");
+    if (filter === "done") return c.done;
     if (filter === "late") return !s.missing && s.lateH > 0;
     if (filter === "miss") return s.missing;
     if (filter === "rev") return s.rev;
     return true;
   });
-  const val = ({s,c}) => ({no:s.no, nama:s.nama, status:s.missing?2:s.lateH>0?1:0, total:c.graded?c.total:-1, ai:s.ai??-1, days:c.days, pen:c.pen, final:c.final??-1})[sortKey];
+  const val = ({s,c}) => ({no:s.no, nama:s.nama, status:s.missing?2:s.lateH>0?1:0, graded:c.filled, total:c.filled?c.total:-1, ai:s.ai??-1, pen:c.pen, final:c.final??-1})[sortKey];
   list.sort((a,b) => { const x = val(a), y = val(b); return (typeof x === "string" ? x.localeCompare(y) : x - y) * sortDir; });
-
-  const frag = document.createDocumentFragment();
-  list.forEach(({s,c}) => {
-    const tr = document.createElement("tr");
-    if (s.missing) tr.className = "missing";
-    const ed = store.edits[s.id] || {};
-    const qcells = c.sc.map((v,i) => {
-      const cls = [];
-      if (v !== null && v !== "" && +v >= MAX[i]) cls.push("full");
-      else if (v !== null && v !== "" && +v <= MAX[i]*0.4) cls.push("low");
-      if (ed[i] !== undefined) cls.push("edited");
-      return `<td class="q"><input class="${cls.join(" ")}" data-id="${s.id}" data-i="${i}" type="number" min="0" max="${MAX[i]}" step="0.5" inputmode="decimal" value="${v ?? ""}" aria-label="${s.nama} soal ${i+1}" ${s.missing?"disabled":""}></td>`;
+  const curId = students[cur].id;
+  const rows = list.map(({s,c,g}) => {
+    const qc = c.sc.map((v,i) => {
+      const none = v === null || v === "" || v === undefined;
+      const cls = none ? "none" : +v >= MAX[i] ? "full" : +v <= MAX[i]*0.4 ? "low" : "";
+      return `<td class="q ${cls}">${none ? "·" : fmt(+v)}</td>`;
     }).join("");
-    const aiDiff = c.graded && s.ai != null && Math.abs(s.ai - c.total) > 0.05;
-    const hasNote = s.flag || s.cat || s.pdf;
-    tr.innerHTML = `
+    const gradedPill = c.done ? `<span class="pill ok">Sudah</span>` : c.filled ? `<span class="pill rev">${c.filled}/${NQ} soal</span>` : (s.missing && rules().miss==="0") ? `<span class="pill pend">Otomatis 0</span>` : `<span class="pill pend">Belum</span>`;
+    const aiDiff = c.done && s.ai != null && Math.abs(s.ai - c.total) > 0.05;
+    const note = g?.note ? esc(g.note.length > 60 ? g.note.slice(0,60) + "…" : g.note) : "";
+    return `<tr class="${s.id===curId?"current":""} ${s.missing?"missing":""}">
       <td class="r num">${s.no}</td>
-      <td class="sticky name"><div class="n">${s.nama}</div><div class="nim">${s.nim}</div></td>
-      <td>${statusCell(s,c)}</td>
-      ${qcells}
-      <td class="r num tot">${c.graded ? fmt(c.total) : "–"}</td>
-      <td class="r num ${aiDiff?"diff":""}" title="${aiDiff?"Berbeda dengan total per soal":""}">${s.ai != null ? fmt(s.ai) : "–"}</td>
-      <td class="r num">${s.missing ? "–" : c.days ? fmt(c.days,2) : "0"}</td>
+      <td class="sticky name"><button data-open="${s.id}" aria-label="Nilai ${esc(s.nama)}"><div class="n">${esc(s.nama)}</div><div class="nim">${s.nim}</div></button></td>
+      <td>${statusPill(s)}${s.rev?`<span class="sub" style="color:var(--rev)">Perlu ditinjau</span>`:""}</td>
+      <td>${gradedPill}</td>
+      ${qc}
+      <td class="r num tot">${c.filled ? fmt(c.total) : "–"}</td>
       <td class="r num ${c.pen?"pen":""}">${c.pen ? "−"+fmt(c.pen) : "0"}</td>
       <td class="final num">${c.final == null ? "–" : fmt(c.final)}</td>
-      <td>${hasNote ? `<button class="notebtn" data-note="${s.id}" aria-expanded="${open.has(s.id)}">${open.has(s.id)?"Tutup":"Lihat"}</button>` : ""}</td>`;
-    frag.appendChild(tr);
-    if (open.has(s.id)){
-      const nr = document.createElement("tr"); nr.className = "note";
-      const parts = [];
-      if (s.flag) parts.push(`<p><strong>Catatan koreksi:</strong> ${s.flag}</p>`);
-      if (s.cat && s.cat !== s.flag && s.cat !== "Tidak ada submission") parts.push(`<p><strong>Catatan skor:</strong> ${s.cat}</p>`);
-      if (s.pdf) parts.push(`<p><a href="${s.pdf}" target="_blank" rel="noopener">Buka PDF jawaban</a></p>`);
-      nr.innerHTML = `<td colspan="${cols.length}">${parts.join("")}</td>`;
-      frag.appendChild(nr);
-    }
+      <td class="r num ${aiDiff?"diff":""}">${s.ai != null ? fmt(s.ai) : "–"}</td>
+      <td style="white-space:normal;min-width:160px;font-size:12px;color:var(--ink-2)">${note}</td></tr>`;
   });
-  tbody.replaceChildren(frag);
-  if (!list.length) tbody.innerHTML = `<tr><td colspan="${cols.length}" class="empty">Tidak ada mahasiswa yang cocok dengan pencarian.</td></tr>`;
+  document.getElementById("tbody").innerHTML = rows.length ? rows.join("") : `<tr><td colspan="${cols.length}" class="empty">Tidak ada mahasiswa yang cocok.</td></tr>`;
   renderStats();
 }
-
 function renderStats(){
   const all = students.map(s => ({s, c: compute(s)}));
-  const sub = all.filter(x => !x.s.missing);
-  const late = sub.filter(x => x.s.lateH > 0);
-  const finals = all.map(x => x.c.final).filter(v => v != null);
-  const avg = finals.reduce((a,b)=>a+b,0) / (finals.length||1);
-  const pending = all.filter(x => x.c.final == null).length;
-  const totalPen = late.reduce((a,x)=>a+x.c.pen,0);
-  document.getElementById("count-meta").textContent = `${students.length} mahasiswa`;
+  const autoZero = rules().miss === "0";
+  const need = all.filter(x => !(x.s.missing && autoZero));
+  const done = need.filter(x => x.c.done).length;
+  const late = all.filter(x => !x.s.missing && x.s.lateH > 0);
+  const finals = all.filter(x => !x.s.missing && x.c.done).map(x => x.c.final);
+  const avg = finals.length ? finals.reduce((a,b)=>a+b,0) / finals.length : null;
+  const pct = need.length ? Math.round(done/need.length*100) : 0;
   document.getElementById("stats").innerHTML = [
-    ["", students.length, "Mahasiswa terdaftar"],
-    ["", sub.length, "Mengumpulkan"],
-    ["late", late.length, `Telat · total −${fmt(totalPen)} poin`],
-    ["miss", students.length - sub.length, "Tidak mengumpulkan"],
-    ["rev", pending, "Belum dinilai"],
-    ["", fmt(avg), `Rata-rata nilai akhir (${finals.length} orang)`],
+    ["ok", `${done}<small style="font-size:15px;color:var(--ink-2)"> / ${need.length}</small>`, `Sudah dinilai manual<div class="progress"><i style="width:${pct}%"></i></div>`],
+    ["rev", need.length - done, "Belum dinilai"],
+    ["late", late.length, "Mengumpulkan telat"],
+    ["miss", all.filter(x => x.s.missing).length, "Tidak mengumpulkan"],
+    ["", avg == null ? "–" : fmt(avg), `Rata-rata nilai akhir, ${finals.length} yang sudah dinilai`],
   ].map(([k,v,l]) => `<div class="stat ${k}"><b>${v}</b><span>${l}</span></div>`).join("");
+  const R = rules();
+  document.getElementById("rules-sum").textContent = `−${fmt(R.perDay)} poin/hari${R.max?`, maks −${fmt(R.max)}`:""}${R.grace?`, toleransi ${R.grace} menit`:""}`;
 }
-
-// events
-document.getElementById("tbody").addEventListener("change", e => {
-  const inp = e.target.closest("input[data-id]"); if (!inp) return;
-  const id = inp.dataset.id, i = +inp.dataset.i;
-  let v = inp.value === "" ? null : Math.max(0, Math.min(MAX[i], +inp.value));
-  const orig = (students.find(s => s.id === id).s || [])[i] ?? null;
-  store.edits[id] = store.edits[id] || {};
-  if (v === orig) delete store.edits[id][i]; else store.edits[id][i] = v;
-  save(); render();
-  const again = document.querySelector(`input[data-id="${id}"][data-i="${i}"]`); if (again) again.focus();
-});
 document.getElementById("tbody").addEventListener("click", e => {
-  const b = e.target.closest("[data-note]"); if (!b) return;
-  const id = b.dataset.note; open.has(id) ? open.delete(id) : open.add(id); render();
+  const b = e.target.closest("[data-open]"); if (!b) return;
+  go(students.findIndex(s => s.id === b.dataset.open));
+  document.getElementById("sheet").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+  setTimeout(() => document.getElementById("q0")?.focus({preventScroll:true}), 300);
 });
-ruleIds.forEach(id => document.getElementById(id).addEventListener("input", e => { store.rules[id] = e.target.value; save(); render(); }));
-document.getElementById("tm").addEventListener("input", e => { store.tm = e.target.value; save(); });
 document.getElementById("q").addEventListener("input", e => { query = e.target.value; render(); });
 document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => {
   filter = b.dataset.f; document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b)); render();
 }));
 const toast = msg => { const t = document.getElementById("toast"); t.textContent = msg; clearTimeout(toast.t); toast.t = setTimeout(()=>t.textContent="",3000); };
-document.getElementById("reset").addEventListener("click", () => {
-  const b = document.getElementById("reset");
-  if (b.dataset.confirm){ store.edits = {}; save(); render(); delete b.dataset.confirm; b.textContent = "Kembalikan skor asli"; toast("Skor dikembalikan ke data asli"); }
-  else { b.dataset.confirm = "1"; b.textContent = "Klik lagi untuk konfirmasi"; setTimeout(()=>{ delete b.dataset.confirm; b.textContent = "Kembalikan skor asli"; }, 4000); }
-});
 document.getElementById("copy").addEventListener("click", () => {
-  const tm = document.getElementById("tm").value;
-  const head = ["No","Nama","NIM","Pertemuan","Status", ...MAX.map((m,i)=>`S${i+1} (${m})`), "Total","Telat (hari)","Pengurangan","Nilai Akhir"];
+  const tm = settings.tm || "";
+  const head = ["No","Nama","NIM","Pertemuan","Status pengumpulan", ...MAX.map((m,i)=>`S${i+1} (${m})`), "Total","Hari telat","Pengurangan","Nilai akhir","Catatan dosen"];
   const lines = [head.join("\t")];
-  students.forEach(s => { const c = compute(s);
+  const num = v => v === null || v === undefined || v === "" ? "" : String(Math.round(v*100)/100).replace(".",",");
+  students.forEach(s => { const c = compute(s); const g = grades[s.id];
     lines.push([s.no, s.nama, s.nim, tm, s.missing?"Tidak mengumpulkan":s.lateH>0?`Telat ${s.lateText}`:"Tepat waktu",
-      ...c.sc.map(v => v ?? ""), c.graded?c.total:"", s.missing?"":c.days, c.pen, c.final ?? ""].map(v => typeof v === "number" ? String(Math.round(v*100)/100).replace(".",",") : v).join("\t"));
+      ...c.sc.map(num), c.filled?num(c.total):"", s.missing?"":num(c.days), num(c.pen), num(c.final), (g?.note||"").replace(/\s+/g," ")].join("\t"));
   });
   const text = lines.join("\n");
   const fb = () => { const box = document.getElementById("fallback"), ta = document.getElementById("fallback-ta"); box.hidden = false; ta.value = text; ta.select(); toast("Salin teks di kotak ini (Ctrl+C)"); };
-  try { navigator.clipboard.writeText(text).then(() => toast("Tabel disalin. Tempel di Excel atau Google Sheets."), fb); } catch(e){ fb(); }
+  try { navigator.clipboard.writeText(text).then(() => toast("Rekap disalin. Tempel di Excel atau Google Sheets."), fb); } catch(e){ fb(); }
 });
 
-render();
+// ---------- pengaturan (pertemuan + aturan) ----------
+function applySettingsToInputs(){
+  ruleIds.forEach(id => { const el = document.getElementById(id); if (document.activeElement !== el) el.value = settings.rules[id]; });
+  const tm = document.getElementById("tm"); if (document.activeElement !== tm) tm.value = settings.tm || "";
+}
+let settingsTimer = null;
+function saveSettingsSoon(){
+  lsWrite(); clearTimeout(settingsTimer);
+  settingsTimer = setTimeout(async () => { if (db){ try{ await db.doc("pengaturan/umum").set({tm:settings.tm, rules:settings.rules}); }catch(e){ setSync("Pengaturan hanya tersimpan di browser ini", true); } } }, 700);
+}
+ruleIds.forEach(id => document.getElementById(id).addEventListener("input", e => { settings.rules[id] = e.target.value; saveSettingsSoon(); if (draft) updateCalc(); render(); }));
+document.getElementById("tm").addEventListener("input", e => { settings.tm = e.target.value; saveSettingsSoon(); });
+
+// ---------- start ----------
+applySettingsToInputs();
+loadDraft(); renderSheet(); render();
+setSync("Nilai tersimpan di browser ini");
+
+(async () => {
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; } catch(e){ db = null; }
+  if (!db){ setSync("Nilai tersimpan di browser ini saja. Gunakan Salin rekap untuk menyimpan hasil akhir.", true); return; }
+  mode = "db"; setSync("Menyambungkan ke penyimpanan bersama…");
+  let first = true;
+  db.collection("nilai").onSnapshot(snap => {
+    const remote = {};
+    snap.docs.forEach(d => { if (d.exists && byId[d.id]) remote[d.id] = d.data(); });
+    if (first){
+      first = false;
+      // bawa nilai lokal yang belum ada di penyimpanan bersama
+      const pending = Object.keys(grades).filter(id => !remote[id] && byId[id]);
+      pending.forEach(id => { db.doc("nilai/" + id).set(grades[id]).catch(()=>{}); remote[id] = grades[id]; });
+    }
+    grades = {...remote}; lsWrite();
+    if (!dirty){ loadDraft(); renderSheet(); }
+    render();
+    setSync(`Tersimpan di penyimpanan bersama · ${Object.keys(grades).length} lembar tersimpan`);
+  }, () => setSync("Penyimpanan bersama terputus; perubahan disimpan di browser ini", true));
+  db.doc("pengaturan/umum").onSnapshot(snap => {
+    if (!snap.exists) return;
+    const d = snap.data();
+    settings = { tm: d.tm || "", rules: {...DEFAULT_RULES, ...(d.rules||{})} };
+    lsWrite(); applySettingsToInputs(); if (draft) updateCalc(); render();
+  }, () => {});
+})();
 </script>
 </body>
 </html>
