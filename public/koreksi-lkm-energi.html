@@ -246,7 +246,8 @@ textarea.fallback{width:100%;height:140px;font-family:var(--mono);font-size:11.5
         <button class="chip" data-f="miss" aria-pressed="false">Tidak mengumpulkan</button>
         <button class="chip" data-f="rev" aria-pressed="false">Ditandai perlu ditinjau</button>
       </div>
-      <button class="btn" id="copy">Salin rekap (untuk Excel)</button>
+      <button class="btn" id="csv">Unduh CSV</button>
+      <button class="btn ghost" id="copy">Salin rekap</button>
       <span class="toast" id="toast" role="status"></span>
     </div>
     <div id="fallback" hidden><textarea class="fallback" id="fallback-ta" aria-label="Data rekap"></textarea></div>
@@ -533,16 +534,44 @@ document.querySelectorAll(".chip").forEach(b => b.addEventListener("click", () =
   filter = b.dataset.f; document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === b)); render();
 }));
 const toast = msg => { const t = document.getElementById("toast"); t.textContent = msg; clearTimeout(toast.t); toast.t = setTimeout(()=>t.textContent="",3000); };
-document.getElementById("copy").addEventListener("click", () => {
+function rekapRows(){
   const tm = settings.tm || "";
-  const head = ["No","Nama","NIM","Pertemuan","Status pengumpulan", ...MAX.map((m,i)=>`S${i+1} (${m})`), "Total","Hari telat","Pengurangan","Nilai akhir","Catatan dosen"];
-  const lines = [head.join("\t")];
+  const head = ["No","Nama","NIM","Pertemuan","Status pengumpulan", ...MAX.map((m,i)=>`S${i+1} (${m})`), "Total skor","Hari telat","Pengurangan","Nilai akhir","Status penilaian","Catatan dosen"];
   const num = v => v === null || v === undefined || v === "" ? "" : String(Math.round(v*100)/100).replace(".",",");
+  const rows = [head];
   students.forEach(s => { const c = compute(s); const g = grades[s.id];
-    lines.push([s.no, s.nama, s.nim, tm, s.missing?"Tidak mengumpulkan":s.lateH>0?`Telat ${s.lateText}`:"Tepat waktu",
-      ...c.sc.map(num), c.filled?num(c.total):"", s.missing?"":num(c.days), num(c.pen), num(c.final), (g?.note||"").replace(/\s+/g," ")].join("\t"));
+    rows.push([s.no, s.nama, s.nim, tm, s.missing?"Tidak mengumpulkan":s.lateH>0?`Telat ${s.lateText}`:"Tepat waktu",
+      ...c.sc.map(num), c.filled?num(c.total):"", s.missing?"":num(c.days), num(c.pen), num(c.final),
+      c.done?"Sudah dinilai":c.filled?`Sebagian (${c.filled}/${NQ})`:(s.missing&&rules().miss==="0")?"Otomatis 0":"Belum dinilai",
+      (g?.note||"").replace(/\s+/g," ")]);
   });
-  const text = lines.join("\n");
+  return rows;
+}
+function toCSV(rows){
+  const cell = v => { v = String(v ?? ""); return /[";\n]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; };
+  return "\ufeff" + rows.map(r => r.map(cell).join(";")).join("\r\n") + "\r\n";
+}
+function csvName(){
+  const tm = (settings.tm || "").trim().replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  return `Nilai-LKM-Energi${tm ? "-" + tm : ""}.csv`;
+}
+document.getElementById("csv").addEventListener("click", async () => {
+  const csv = toCSV(rekapRows()); const name = csvName();
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; } catch(e){ dl = null; }
+  if (dl){
+    try { await dl.save({filename:name, data:csv}); toast(`${name} diunduh`); }
+    catch(e){ if (e && e.code === "declined") toast("Unduhan dibatalkan"); else if (e && e.code === "rate_limited") toast("Tunggu sebentar lalu coba lagi"); else toast("Unduhan tidak tersedia di tampilan ini. Pakai Salin rekap."); }
+    return;
+  }
+  try {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    toast(`${name} diunduh`);
+  } catch(e){ toast("Unduhan tidak tersedia. Pakai Salin rekap."); }
+});
+document.getElementById("copy").addEventListener("click", () => {
+  const text = rekapRows().map(r => r.join("\t")).join("\n");
   const fb = () => { const box = document.getElementById("fallback"), ta = document.getElementById("fallback-ta"); box.hidden = false; ta.value = text; ta.select(); toast("Salin teks di kotak ini (Ctrl+C)"); };
   try { navigator.clipboard.writeText(text).then(() => toast("Rekap disalin. Tempel di Excel atau Google Sheets."), fb); } catch(e){ fb(); }
 });
